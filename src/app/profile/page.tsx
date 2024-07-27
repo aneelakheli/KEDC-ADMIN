@@ -11,10 +11,15 @@ export const metadata: Metadata = {
 };
 
 const Profile = () => {
+  const breadcrumbs = [
+    { label: "Dashboard", href: "/" },
+    { label: "Profile" },
+  ];
+
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-242.5">
-        <Breadcrumb pageName="Profile" />
+        <Breadcrumb breadcrumbs={breadcrumbs} />
 
         <div className="overflow-hidden rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="relative z-20 h-35 md:h-65">

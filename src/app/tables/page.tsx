@@ -13,9 +13,15 @@ export const metadata: Metadata = {
 };
 
 const TablesPage = () => {
+  const breadcrumbs = [
+    { label: "Dashboard", href: "/" },
+    { label: "Tables", href: "/tables" }
+  ];
+
+
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Tables" />
+      <Breadcrumb breadcrumbs={breadcrumbs} />
 
       <div className="flex flex-col gap-10">
         <TableOne />

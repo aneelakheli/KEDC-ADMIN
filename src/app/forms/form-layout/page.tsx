@@ -12,9 +12,14 @@ export const metadata: Metadata = {
 };
 
 const FormLayout = () => {
+  const breadcrumbs = [
+    { label: "Dashboard", href: "/" },
+    { label: "formLayout" },
+];
+
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="FormLayout" />
+      <Breadcrumb breadcrumbs={breadcrumbs} />
 
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-2">
         <div className="flex flex-col gap-9">
