@@ -9,10 +9,15 @@ export const metadata: Metadata = {
     "This is Next.js Buttons page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
 };
 
+const breadcrumbs = [
+  { label: "Dashboard", href: "/" },
+  { label: "Buttons" },
+];
+
 const Buttons = () => {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Buttons" />
+      <Breadcrumb breadcrumbs={breadcrumbs} />
 
       {/* <!-- Normal Button Items --> */}
       <div className="mb-10 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
