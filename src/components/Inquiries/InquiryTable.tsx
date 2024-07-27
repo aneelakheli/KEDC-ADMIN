@@ -42,7 +42,7 @@ const InquiryTable = () => {
 
             {userData?.data?.map((inquiry: Inquiry, key: number) => (
                 <div
-                    className="grid grid-cols-9 gap-2 border-t border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5 break-words"
+                    className="grid grid-cols-9 gap-2 border-t border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5 break-all"
                     key={key}
                 >
                     <div className="col-span-2 hidden items-center sm:flex">
