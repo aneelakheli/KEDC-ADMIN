@@ -24,7 +24,7 @@ function BookForm({ bookId }) {
         price: '',
         grade: '',
         image: null,
-        imageUrl: '',
+        imageUrl: ''
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -158,13 +158,13 @@ function BookForm({ bookId }) {
                 (<LoadingComponent />) :
                 (bookId && isQueryError) ?
                     (<ErrorComponent errorMessage={`Error fetching book: ${queryError.message}`} />) :
-                    (<form className="max-w-full overflow-x-auto flex flex-col gap-5.5 p-6.5" onSubmit={bookId? handleEdit:handleCreate}>
+                    (<form className="max-w-full overflow-x-auto flex flex-col gap-5.5 p-6.5" onSubmit={bookId ? handleEdit : handleCreate}>
                         <div className='flex flex-col justify-center items-center'>
                             <div className="w-full md:w-1/2 relative grid grid-cols-1 md:grid-cols-3 border border-gray-300 bg-gray-100 rounded-lg select-none">
                                 <div className="rounded-l-lg p-4 bg-gray-200 flex flex-col justify-center items-center border-0 border-r border-gray-300">
                                     <label className="cursor-pointer hover:opacity-80 inline-flex items-center text-center justify-center shadow-md my-2 px-2 py-2 bg-gray-900 text-gray-50 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                                         Select image
-                                        <input id="restaurantImage" name="image" className="text-sm cursor-pointer w-36 hidden" type="file" onChange={handleImageChange} accept="image/*"/>
+                                        <input id="restaurantImage" name="image" className="text-sm cursor-pointer w-36 hidden" type="file" onChange={handleImageChange} accept="image/*" />
                                     </label>
                                     <button
                                         type="button"
@@ -241,6 +241,20 @@ function BookForm({ bookId }) {
                             />
                             {errors.publication && <p className="text-red text-xs mt-1">{errors.publication}</p>}
                         </div>
+
+                        <div>
+                            <label className="mb-3 block text-sm font-medium text-black dark:text-white">Description</label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                placeholder="Description"
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                rows="3"
+                            />
+                            {errors.description && <p className="text-red-500 text-xs mt-2">{errors.description}</p>}
+                        </div>
+
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                 Editor

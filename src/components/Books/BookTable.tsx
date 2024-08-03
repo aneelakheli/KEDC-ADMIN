@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllBooks } from '@/serivces/bookService';
 import { FaPlus } from "react-icons/fa";
 
-const UserTable = () => {
+const BookTable = () => {
     const { data: userData, isLoading, error, isError } = useQuery({
         queryKey: ['books'],
         queryFn: getAllBooks,
@@ -99,4 +99,4 @@ const UserTable = () => {
     );
 };
 
-export default UserTable;
+export default BookTable;
