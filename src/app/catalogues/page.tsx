@@ -1,21 +1,22 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import InquiryTable from "@/components/Inquiries/InquiryTable"
+import BookTable from "@/components/Books/BookTable";
+import CatalogueTable from "@/components/Catalogues/CatalogueTable";
 
-const Inquiries = () => {
+const Books = () => {
   const breadcrumbs = [
     { label: "Dashboard", href: "/" },
-    { label: "Inquiries", href: "/inquiries" }
-  ];
+    { label: "Catalogues", href: "/catalogues" }
+];
 
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-242.5">
         <Breadcrumb breadcrumbs={breadcrumbs} />
-        <InquiryTable />
+        <CatalogueTable/>
       </div>
     </DefaultLayout>
   );
 };
 
-export default Inquiries;
+export default Books;
