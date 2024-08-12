@@ -7,7 +7,10 @@ import { Package } from "@/types/package";
 import { User } from "@/types/user";
 import { Book } from "@/types/book";
 import { useQuery } from "@tanstack/react-query";
-import { getOneBook } from '@/serivces/bookService';
+import { useRouter } from 'next/navigation';
+import { deleteBook, getOneBook } from '@/serivces/bookService';
+import { useState } from "react";
+import notify from "@/utils/notify";
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
   return (
@@ -21,11 +24,65 @@ function ErrorComponent({ errorMessage }: { errorMessage: string }) {
 }
 
 function BookDetail({ id }) {
-  const { data: bookData, isSuccess, isLoading, error, isError } = useQuery({
+  const { data: bookData, isSuccess, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['books', id],
     queryFn: () => getOneBook(id),
   })
   console.log(isLoading, error, isError, isLoading, bookData?.data);
+
+
+  const DeleteBookComponent = ({ bookId }:{bookId:String}) => {
+    
+    const router = useRouter();
+    const [isDeletionLoading, setIsDeletionLoading] = useState(false);
+
+    const handleDelete = async () => {
+      setIsDeletionLoading(true);
+      try {
+        console.log("dlakjfkl", bookId);
+        const response = await deleteBook(bookId);
+
+        if (response.success === true) {
+          console.log("Book successfully deleted", response.data);
+          notify("Book successfully deleted!", "success");
+          router.push(`/books/`);
+        }
+        else {
+          console.error("Error deleting Book", response, "Data:", response.data);
+        }
+      }
+      catch (error) {
+        console.error("Caught Error", error.response.status, error.response.data.error);
+        return;
+      }
+      finally {
+        setIsDeletionLoading(false);
+      }
+    }
+
+    return (
+      <div className="flex justify-center items-center">
+        {isDeletionLoading ? (
+          <button className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-red rounded hover:bg-red">
+            <div
+              className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+              role="status">
+              <span
+                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+              >Loading...
+              </span>
+            </div>
+            Delete
+          </button>
+        ) : (
+          <button className="px-4 py-2 text-white bg-red rounded hover:bg-red" onClick={handleDelete}>
+            Delete
+          </button>
+        )}
+      </div>
+    )
+  }
+
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
@@ -42,7 +99,7 @@ function BookDetail({ id }) {
 
       {isError && (<ErrorComponent errorMessage={error.message} />)}
 
-      {isSuccess &&
+      {isSuccess && bookData &&
         (
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,7 +121,7 @@ function BookDetail({ id }) {
                 </div>
                 <div className="mb-4">
                   <span className="font-semibold text-gray-700 dark:text-gray-300">Category:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.category}</span>
+                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.category?.name}</span>
                 </div>
                 <div className="mb-4">
                   <span className="font-semibold text-gray-700 dark:text-gray-300">Publication:</span>
@@ -80,7 +137,7 @@ function BookDetail({ id }) {
                 </div>
                 <div className="mb-4">
                   <span className="font-semibold text-gray-700 dark:text-gray-300">Grade:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.grade}</span>
+                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.grade?.name}</span>
                 </div>
               </div>
             </div>
@@ -94,10 +151,14 @@ function BookDetail({ id }) {
               <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
                 Edit
               </Link>
-              <button className="px-4 py-2 text-white bg-red rounded hover:bg-red">
-                Delete
-              </button>
+              <DeleteBookComponent bookId={id}/>
             </div>
+          </div>
+        )}
+
+        {!bookData && (
+          <div className="w-full flex justify-center items-center my-16">
+            <div className="text-xl font-semibold my-4 ">No book found with id {id}</div>
           </div>
         )}
 

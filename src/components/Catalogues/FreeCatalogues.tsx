@@ -45,9 +45,9 @@ const FreeCatalogues = () => {
                     key={key}
                 >
                     <div className="col-span-3 flex items-center">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                        <Link href={`/catalogues/${catalogue._id}`} className="flex flex-col gap-4 sm:flex-row sm:items-center">
                            {catalogue._id}
-                        </div>
+                        </Link>
                     </div>
                     <div className="col-span-2 hidden items-center sm:flex">
                         <p className="text-sm text-black dark:text-white">

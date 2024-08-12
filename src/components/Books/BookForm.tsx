@@ -4,7 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { addBook, updateBook } from '@/serivces/bookService';
 import React, { useState, useEffect } from 'react';
 import { getOneBook } from '@/serivces/bookService';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import { getAllSubjects } from "@/serivces/subjectService";
+import { FaPlus } from "react-icons/fa";
+import AddSubjectModal from "../Subject/AddSubjectModal";
+import Tooltip from "../Tooltip";
+import { getAllGrades } from "@/serivces/gradeService";
+import AddGradeModal from "../Grade/AddGradeModal";
+import notify from "@/utils/notify";
 
 function BookForm({ bookId }) {
     const router = useRouter();
@@ -17,22 +24,43 @@ function BookForm({ bookId }) {
     const [formData, setFormData] = useState({
         name: '',
         author: '',
-        category: '',
+        categoryId: '',
         publication: '',
         description: '',
         editor: '',
         price: '',
-        grade: '',
+        gradeId: '',
         image: null,
         imageUrl: ''
     });
     const [isLoading, setIsLoading] = useState(false);
 
     const [errors, setErrors] = useState({});
+    
+
+    // Category(Subject) Field Options
+    const [showSubjectModal, setShowSubjectModal] = useState(false);
+    const toggleShowModal = () => setShowSubjectModal(!showSubjectModal)
+
+    const { data: subjectData, isLoading: isSubjectLoading, error: subjectError, isError: isSubjectError } = useQuery({
+        queryKey: ['subject'],
+        queryFn: () => getAllSubjects(),
+    });
+    console.log("subjecDtata", isSubjectError, subjectError?.data, isSubjectError, isSubjectLoading, subjectData)
+
+    // Grade Field Options
+    const [showGradeModal, setShowGradeModal] = useState(false);
+    const toggleGradeModal = () => setShowGradeModal(!showGradeModal)
+
+    const { data: gradeData, isLoading: isGradeLoading, error: gradeError, isError: isGradeError } = useQuery({
+        queryKey: ['grade'],
+        queryFn: () => getAllGrades(),
+    });
 
     useEffect(() => {
         if (bookData) {
-            setFormData(bookData);
+            setFormData({...bookData, gradeId:bookData.grade?._id || '', categoryId:bookData.category?._id || ''});
+            console.log("data loading lkajflkdjas+++++++", bookData.grade?._id, bookData.category?._id)
         }
     }, [bookData]);
 
@@ -54,17 +82,18 @@ function BookForm({ bookId }) {
     const handleRemoveImage = () => {
         setFormData({ ...formData, image: null, imageUrl: '' });
     };
+    
 
     const validateForm = () => {
         const newErrors = {};
         if (!formData.name) newErrors.name = 'Title is required';
         if (!formData.author) newErrors.author = 'Author is required';
-        if (!formData.category) newErrors.category = 'Category is required';
+        if (!formData.categoryId) newErrors.categoryId = 'Category is required';
         if (!formData.publication) newErrors.publication = 'Publication is required';
         if (!formData.editor) newErrors.editor = 'Editor is required';
         if (!formData.price) newErrors.price = 'Price is required';
         if (isNaN(formData.price)) newErrors.price = 'Price shoule be a valid number';
-        if (!formData.grade) newErrors.grade = 'Grade is required';
+        if (!formData.gradeId) newErrors.gradeId = 'Grade is required';
         if (!formData.image) newErrors.image = 'Image is required';
 
         return newErrors;
@@ -83,6 +112,7 @@ function BookForm({ bookId }) {
 
                 if (response.success === true) {
                     console.log("Book successfully uploaded", response.data);
+                    notify("Book Uploaded Successfully", "success")
                     router.push(`/books/${response.data._id}`);
                 }
                 else {
@@ -90,7 +120,8 @@ function BookForm({ bookId }) {
                 }
             }
             catch (error) {
-                console.error("Caught Error", error.response.status, error.response.data.error);
+                console.log(error, error.message || error.response || error.data);
+                // console.error("Caught Error", error.response.status, error.response.data.error);
                 return;
             }
             finally {
@@ -113,9 +144,11 @@ function BookForm({ bookId }) {
                 console.log("Response status", response.success, response.success === true, response.success == true);
                 if (response.success === true) {
                     console.log("Book successfully Updated");
+                    notify("Book successfully Updated","success");
                 }
                 else {
                     console.error("Error Updating book", response.status, "Data:", response.data);
+                    notify("Error Updating book","error");
                 }
             }
             catch (error) {
@@ -217,15 +250,26 @@ function BookForm({ bookId }) {
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                 Category
                             </label>
-                            <input
-                                type="text"
-                                name="category"
-                                placeholder="Category"
-                                value={formData.category}
-                                onChange={handleInputChange}
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                            />
-                            {errors.category && <p className="text-red text-xs mt-1">{errors.category}</p>}
+                            <div className="flex items-center gap-2">
+                                <select
+                                    name="categoryId"
+                                    value={formData.categoryId}
+                                    onChange={handleInputChange}
+                                    className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                >
+                                    <option value="">Select Subject</option>
+                                    {subjectData?.data?.map((subject) =>
+                                        <option value={subject._id}>{subject.name}</option>
+                                    )}
+                                </select>
+                                <Tooltip content="Add New Category" className="">
+                                    <button type="button" className="h-12 bg-red p-1 px-2 text-white rounded-md" onClick={() => toggleShowModal()}>
+                                        <FaPlus className="text-lg" />
+                                    </button>
+                                </Tooltip>
+                            </div>
+
+                            {errors.categoryId && <p className="text-red text-xs mt-1">{errors.categoryId}</p>}
                         </div>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -253,6 +297,31 @@ function BookForm({ bookId }) {
                                 rows="3"
                             />
                             {errors.description && <p className="text-red-500 text-xs mt-2">{errors.description}</p>}
+                        </div>
+                        <div>
+                            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                                Grade
+                            </label>
+                            <div className="flex items-center gap-2">
+                                <select
+                                    name="gradeId"
+                                    value={formData.gradeId}
+                                    onChange={handleInputChange}
+                                    className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                >
+                                    <option value="">Select Grade</option>
+                                    {gradeData?.data?.map((grade) =>
+                                        <option value={grade._id}>{grade.name}</option>
+                                    )}
+                                </select>
+                                <Tooltip content="Add New Grade" className="">
+                                    <button type="button" className="h-12 bg-red p-1 px-2 text-white rounded-md" onClick={() => toggleGradeModal()}>
+                                        <FaPlus className="text-lg" />
+                                    </button>
+                                </Tooltip>
+                            </div>
+
+                            {errors.gradeId && <p className="text-red text-xs mt-1">{errors.gradeId}</p>}
                         </div>
 
                         <div>
@@ -283,24 +352,13 @@ function BookForm({ bookId }) {
                             />
                             {errors.price && <p className="text-red text-xs mt-1">{errors.price}</p>}
                         </div>
-                        <div>
-                            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                Grade
-                            </label>
-                            <input
-                                type="text"
-                                name="grade"
-                                placeholder="Grade"
-                                value={formData.grade}
-                                onChange={handleInputChange}
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                            />
-                            {errors.grade && <p className="text-red text-xs mt-1">{errors.grade}</p>}
-                        </div>
                         <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90" type='submit'>
                             {bookId ? 'Update' : 'Create'}
                         </button>
                     </form>)}
+            <AddSubjectModal showModal={showSubjectModal} toggleShowModal={toggleShowModal} />
+            <AddGradeModal showModal={showGradeModal} toggleShowModal={toggleGradeModal} />
+
         </div>
     );
 }

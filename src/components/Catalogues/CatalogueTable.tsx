@@ -12,8 +12,8 @@ const CatalogueTable = () => {
                     <FaPlus className="text-xl" />
                     Add New Catalogues
                 </Link>
-                <FreeCatalogues/>
-                <PaidCatalogues/>
+                <FreeCatalogues />
+                <PaidCatalogues />
             </div>
         </div>
     );

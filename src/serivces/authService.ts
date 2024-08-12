@@ -35,3 +35,10 @@ export const loginUser = async (payload:LoginUserPayload) => {
         throw error;
     }
 }
+
+export async function getUser() {
+    // Replace this with your authentication logic
+    const user = await fetch('/api/auth/me'); // Example API call
+    if (!user.ok) return null;
+    return await user.json();
+}

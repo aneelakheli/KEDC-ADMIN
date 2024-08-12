@@ -64,15 +64,16 @@ const BookTable = () => {
                                         />
                                     </div>
                                     <Link href={`/books/${book._id}`}>
-                                        <p className="text-sm text-black dark:text-white">
-                                            {book.name}
+                                        <p className="text-sm font-semibold text-black dark:text-white">
+                                            {book.name}  
                                         </p>
                                     </Link>
                                 </div>
                             </div>
                             <div className="col-span-2 hidden items-center sm:flex">
                                 <p className="text-sm text-black dark:text-white">
-                                    {book.category}
+                                    {/* {console.log("Category", book?.category)} */}
+                                    {book.category?.name || '-'}
                                 </p>
                             </div>
                             <div className="col-span-1 flex items-center">
@@ -81,7 +82,7 @@ const BookTable = () => {
                                 </p>
                             </div>
                             <div className="col-span-1 flex items-center">
-                                <p className="text-sm text-black dark:text-white">{book.grade}</p>
+                                <p className="text-sm text-black dark:text-white">{book.grade?.name || '-'}</p>
                             </div>
                             <div className="col-span-1 flex items-center">
                                 <p className="text-sm text-black dark:text-white">{book.publication}</p>
