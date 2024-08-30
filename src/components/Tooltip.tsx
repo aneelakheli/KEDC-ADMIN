@@ -4,12 +4,10 @@ import React, { useState } from 'react';
 export default function Tooltip({ children, content,className="", position = 'right' }) {
   const [isVisible, setIsVisible] = useState(false);
   const MouseEnter = ()=>{
-    console.log("Entered")
     setIsVisible(true)
   }
 
   const MouseLeft = ()=>{
-    console.log("Lft")
     setIsVisible(false)
   }
   let tooltipPosition;

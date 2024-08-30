@@ -1,6 +1,8 @@
+import { postComment } from '@/serivces/catalogueService';
+import notify from '@/utils/notify';
 import React, { useState } from 'react'
 
-function CommentForm() {
+function CommentForm({ catalogueId }: { catalogueId: String }) {
 
     const [formData, setFormData] = useState({
         title: '',
@@ -8,6 +10,7 @@ function CommentForm() {
         errors: {}
     })
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const handleInputChange = (e) => {
@@ -16,8 +19,41 @@ function CommentForm() {
         setErrors({ ...errors, [name]: '' });
     };
 
-    const handleSubmit = () => {
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.title) newErrors.title = 'Title is required ';
+        if (!formData.description) newErrors.description = 'Description is required';
+        return newErrors;
+    };
 
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const newErrors = validateForm();
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        else {
+            try {
+                const response = await postComment(catalogueId, formData);
+                if (response.success === true) {
+                    console.log("Comment saved!", response.data);
+                    notify("Comment saved", "success");
+                }
+                else {
+                    console.error("Error posting comment", response, "Data:", response.data);
+                }
+            }
+            catch (error) {
+                console.error("Caught Error", error.response.status, error.response.data.error);
+                return;
+            }
+            finally {
+                setIsLoading(false);
+            }
+
+        }
     }
 
     return (
@@ -49,9 +85,23 @@ function CommentForm() {
                         onChange={handleInputChange}
                         className="w-full p-3 text-gray-900 border-stroke dark:text-white bg-gray-100 rounded border border-gray-300 dark:border-gray-700" />
                 </div>
-                <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90" type='submit'>
-                    Post
-                </button>
+                {isLoading ? (
+                    <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                        <div
+                            className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                            role="status">
+                            <span
+                                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                            >Loading...
+                            </span>
+                        </div>
+                        Post
+                    </button>
+                ) : (
+                    <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90" type='submit'>
+                        Post
+                    </button>
+                )}
             </form>
         </div>
     )

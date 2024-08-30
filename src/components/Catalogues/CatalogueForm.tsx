@@ -6,20 +6,23 @@ import React, { useState, useEffect } from 'react';
 import { getOneBook } from '@/serivces/bookService';
 import { useRouter } from 'next/navigation'
 import { FaRegFileAlt } from "react-icons/fa";
-import { addCatalogue } from "@/serivces/catalogueService";
+import { addCatalogue, getOneCatalogue, updateCatalogue } from "@/serivces/catalogueService";
 import { FaPlus } from "react-icons/fa";
 import Modal from "@/components/Modal";
 import Tooltip from "../Tooltip";
 import AddSubjectModal from "../Subject/AddSubjectModal";
 import { getAllSubjects } from "@/serivces/subjectService";
+import notify from "@/utils/notify";
 
-function CatalogueForm({ catalogueId }) {
+function CatalogueForm({ catalogueId }: { catalogueId: String }) {
     const router = useRouter();
     const { data: catalogueData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
         queryKey: ['catalogue', catalogueId],
-        queryFn: () => getOneBook(catalogueId),
+        queryFn: () => getOneCatalogue(catalogueId),
         enabled: !!catalogueId,
     });
+
+    console.log("CatalougeData", catalogueData || 'Not avialabel', catalogueId)
 
     const { data: subjectData, isLoading: isSubjectLoading, error: subjectError, isError: isSubjectError } = useQuery({
         queryKey: ['subject'],
@@ -35,7 +38,7 @@ function CatalogueForm({ catalogueId }) {
         fileUrl: '',
         image: '',
         imageUrl: '',
-        categoryId: '',
+        category: '',
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -45,8 +48,31 @@ function CatalogueForm({ catalogueId }) {
     const toggleShowModal = () => setShowModal(!showModal)
 
     useEffect(() => {
+        console.log("Cata ==================", catalogueData)
         if (catalogueData) {
-            setFormData(catalogueData);
+            setFormData(
+                {
+                    alt: catalogueData.alt,
+                    type: catalogueData.type,
+                    title: catalogueData.title,
+                    catalogue: catalogueData._id,
+                    fileUrl: catalogueData.fileUrl,
+                    image: catalogueData.image,
+                    imageUrl: catalogueData.imageUrl,
+                    category: catalogueData.category,
+                }
+            );
+            console.log("Done setting", {
+                alt: catalogueData.alt,
+                type: catalogueData.type,
+                title: catalogueData.title,
+                catalogue: catalogueData._id,
+                file: catalogueData.fileUrl,
+                image: catalogueData.image,
+                category: catalogueData.category,
+                imageUrl:'',
+                fileUrl:''
+            })
         }
     }, [catalogueData]);
 
@@ -131,13 +157,14 @@ function CatalogueForm({ catalogueId }) {
         }
         else {
             try {
-                const response = await updateBook(catalogueId, formData);
+                const response = await updateCatalogue(catalogueId, formData);
                 console.log("Response status", response.success, response.success === true, response.success == true);
                 if (response.success === true) {
-                    console.log("Book successfully Updated");
+                    notify("Catalouge successfully Updated", "success")
+                    console.log("Catalogue successfully Updated");
                 }
                 else {
-                    console.error("Error Updating book", response.status, "Data:", response.data);
+                    console.error("Error Updating catalogue", response.status, "Data:", response.data);
                 }
             }
             catch (error) {
@@ -225,18 +252,18 @@ function CatalogueForm({ catalogueId }) {
                         </div>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                Subject
+                                Category
                             </label>
                             <div className="flex items-center gap-2">
                                 <select
-                                    name="categoryId"
-                                    value={formData.categoryId}
+                                    name="category"
+                                    value={formData.category}
                                     onChange={handleInputChange}
                                     className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                 >
                                     <option value="">Select Subject</option>
-                                    {subjectData?.data?.map((subject) =>
-                                        <option value={subject._id}>{subject.name}</option>
+                                    {subjectData?.data?.map((category) =>
+                                        <option value={category._id}>{category.name}</option>
                                     )}
                                 </select>
                                 <Tooltip content="Add New Subject" className="">
@@ -246,7 +273,7 @@ function CatalogueForm({ catalogueId }) {
                                 </Tooltip>
                             </div>
 
-                            {errors.categoryId && <p className="text-red text-xs mt-1">{errors.categoryId}</p>}
+                            {errors.category && <p className="text-red text-xs mt-1">{errors.category}</p>}
                         </div>
                         <div className='flex flex-col justify-center items-center'>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -293,7 +320,7 @@ function CatalogueForm({ catalogueId }) {
                         </div>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                Office Category
+                                Type
                             </label>
                             <select
                                 name="type"

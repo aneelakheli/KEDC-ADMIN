@@ -3,18 +3,16 @@ import Image from "next/image";
 import moment from 'moment';
 
 import Link from "next/link";
-import { Package } from "@/types/package";
-import { User } from "@/types/user";
-import { Book } from "@/types/book";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
-import { deleteBook, getOneBook } from '@/serivces/bookService';
+import { deleteBook } from '@/serivces/bookService';
 import { useState } from "react";
 import notify from "@/utils/notify";
 import { getOneCatalogue } from "@/serivces/catalogueService";
 import CommentForm from "./CommentForm";
-import { pdfjs } from 'react-pdf';
 import PdfViewer from "@/utils/PdfViewer";
+import NewCommentsList from "./NewCommentsList";
+import ApprovedCommentsList from "./ApprovedCommentsList";
 
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
@@ -41,7 +39,7 @@ function CatalogueDetail({ id }: { id: String }) {
     setNumPages(numPages);
   }
 
-  const DeleteBookComponent = ({ bookId }: { bookId: String }) => {
+  const DeleteCataloguesComponent = ({ bookId }: { bookId: String }) => {
 
     const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
@@ -122,7 +120,8 @@ function CatalogueDetail({ id }: { id: String }) {
                   />
                 </div> */}
 
-                <div>
+                <div className="flex flex-col items-center py-4">
+                  {/* <PdfViewer fileUrl={'/MLBOOK.pdf'} /> */}
                   <PdfViewer fileUrl={catalogueData.catalogue} />
                 </div>
 
@@ -148,10 +147,10 @@ function CatalogueDetail({ id }: { id: String }) {
                 </div>
               </div>
               <div className="flex space-x-4 mt-8">
-                <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                <Link href={`/catalogues/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
                   Edit
                 </Link>
-                <DeleteBookComponent bookId={id} />
+                <DeleteCataloguesComponent bookId={id} />
               </div>
             </div>
           )}
@@ -163,15 +162,9 @@ function CatalogueDetail({ id }: { id: String }) {
         )}
 
       </div>
-      <div className="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800 mt-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Comments</h2>
-        {catalogueData?.comment.map(commentData => (
-          <div>
-            {commentData._id}
-          </div>
-        ))}
-      </div>
-      <CommentForm />
+      <NewCommentsList catalogueId={id} />
+      <ApprovedCommentsList catalogueId={id} />
+      <CommentForm catalogueId={id} />
     </>
   )
 }

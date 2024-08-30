@@ -1,17 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    images: {
-        domains: ['localhost'],
-    },
-    webpack: (config) => {
-        config.resolve.alias.canvas = false;
-        // config.module.rules.push({
-        //     test: /\.node/,
-        //     use: "raw-loader",
-        // });
-        return config;
-    },
+  reactStrictMode: true,
+  images: {
+    domains: ['localhost', 'localhost:5006', 'cloudflare.com', 'stanford.edu'],
+  },
+  webpack: (config) => {
+    config.resolve.alias.canvas = false;
+    return config;
+  },
 };
 
 export default nextConfig;
