@@ -39,7 +39,7 @@ export const updateGrade = async (id: string, gradeData: Grade) => {
     }
 };
 
-export const deleteGrade = async (id: string) => {
+export const deleteGrade = async (id: String) => {
     try {
         const response = await del(`/grade/${id}`);
         return response;

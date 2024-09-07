@@ -6,8 +6,8 @@ import AboutForm from "@/components/AboutUs/AboutForm";
 const Edit = ({params}) => {
     const breadcrumbs = [
         { label: "Dashboard", href: "/" },
-        { label: "Books", href: "/books" },
-        { label: "Edit Book" },
+        { label: "About", href: "/about" },
+        { label: "Edit About" },
     ];
 
     return (

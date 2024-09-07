@@ -55,8 +55,8 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
                     alt: catalogueData.alt,
                     type: catalogueData.type,
                     title: catalogueData.title,
-                    catalogue: catalogueData._id,
-                    fileUrl: catalogueData.fileUrl,
+                    catalogue: catalogueData.catalogue,
+                    fileUrl: catalogueData.catalogue,
                     image: catalogueData.image,
                     imageUrl: catalogueData.imageUrl,
                     category: catalogueData.category,
@@ -297,7 +297,7 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
                                         <FaRegFileAlt className="text-gray-400 opacity-75 text-4xl" />
                                     ) : (
                                         <div className="break-all p-4">
-                                            {formData.catalogue.name}
+                                            {formData.catalogue.name || formData.fileUrl}
                                         </div>
                                     )}
                                 </div>

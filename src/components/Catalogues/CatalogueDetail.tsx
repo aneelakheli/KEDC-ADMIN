@@ -1,6 +1,4 @@
 'use client'
-import Image from "next/image";
-import moment from 'moment';
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -8,11 +6,12 @@ import { useRouter } from 'next/navigation';
 import { deleteBook } from '@/serivces/bookService';
 import { useState } from "react";
 import notify from "@/utils/notify";
-import { getOneCatalogue } from "@/serivces/catalogueService";
+import { deleteCatalogue, getOneCatalogue } from "@/serivces/catalogueService";
 import CommentForm from "./CommentForm";
 import PdfViewer from "@/utils/PdfViewer";
 import NewCommentsList from "./NewCommentsList";
 import ApprovedCommentsList from "./ApprovedCommentsList";
+import { useAuth } from "@/context/AuthContext";
 
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
@@ -29,6 +28,9 @@ function ErrorComponent({ errorMessage }: { errorMessage: string }) {
 function CatalogueDetail({ id }: { id: String }) {
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
+
+  const { user } = useAuth();
+
   const { data: catalogueData, isSuccess, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['catalogue', id],
     queryFn: () => getOneCatalogue(id),
@@ -39,24 +41,22 @@ function CatalogueDetail({ id }: { id: String }) {
     setNumPages(numPages);
   }
 
-  const DeleteCataloguesComponent = ({ bookId }: { bookId: String }) => {
-
+  const DeleteCataloguesComponent = ({ catalogueId }: { catalogueId: String }) => {
     const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
 
     const handleDelete = async () => {
       setIsDeletionLoading(true);
       try {
-        console.log("dlakjfkl", bookId);
-        const response = await deleteBook(bookId);
+        const response = await deleteCatalogue(catalogueId);
 
         if (response.success === true) {
-          console.log("Book successfully deleted", response.data);
-          notify("Book successfully deleted!", "success");
-          router.push(`/books/`);
+          console.log("Catalgoue successfully deleted", response.data);
+          notify("Catalgoue successfully deleted!", "success");
+          router.push(`/catalogues/`);
         }
         else {
-          console.error("Error deleting Book", response, "Data:", response.data);
+          console.error("Error deleting Catalogue", response, "Data:", response.data);
         }
       }
       catch (error) {
@@ -146,12 +146,16 @@ function CatalogueDetail({ id }: { id: String }) {
                   {catalogueData.description} Some random description here
                 </div>
               </div>
-              <div className="flex space-x-4 mt-8">
-                <Link href={`/catalogues/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
-                  Edit
-                </Link>
-                <DeleteCataloguesComponent bookId={id} />
-              </div>
+              {
+                ['Admin'].includes(user.role) && (
+                  <div className="flex space-x-4 mt-8">
+                    <Link href={`/catalogues/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                      Edit
+                    </Link>
+                    <DeleteCataloguesComponent catalogueId={id} />
+                  </div>
+                )
+              }
             </div>
           )}
 
@@ -162,7 +166,10 @@ function CatalogueDetail({ id }: { id: String }) {
         )}
 
       </div>
-      <NewCommentsList catalogueId={id} />
+      {['Admin', 'Author'].includes(user.role) &&
+        (
+          <NewCommentsList catalogueId={id} />
+        )}
       <ApprovedCommentsList catalogueId={id} />
       <CommentForm catalogueId={id} />
     </>

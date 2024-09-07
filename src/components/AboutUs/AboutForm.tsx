@@ -10,6 +10,7 @@ import notify from "@/utils/notify";
 
 function AboutForm({ aboutId }: { aboutId: string }) {
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState();
     const { data: bookData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
         queryKey: ['book', aboutId],
         queryFn: () => getOneAbout(aboutId),

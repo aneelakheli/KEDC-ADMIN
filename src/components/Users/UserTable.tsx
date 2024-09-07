@@ -5,49 +5,13 @@ import { Package } from "@/types/package";
 import { User } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import { getAllUsers } from "@/serivces/userService";
-
-const packageData: Package[] = [
-    {
-        name: "Free package",
-        email: "user@example.com",
-        role: "teacher",
-        price: 0.0,
-        invoiceDate: `Jan 13,2023`,
-        status: "Paid",
-    },
-    {
-        name: "Standard Package",
-        email: "user@example.com",
-        role: "teacher",
-        price: 59.0,
-        invoiceDate: `Jan 13,2023`,
-        status: "Paid",
-    },
-    {
-        name: "Business Package",
-        email: "user@example.com",
-        role: "teacher",
-        price: 99.0,
-        invoiceDate: `Jan 13,2023`,
-        status: "Unpaid",
-    },
-    {
-        name: "Standard Package",
-        email: "user@example.com",
-        role: "teacher",
-        price: 59.0,
-        invoiceDate: `Jan 13,2023`,
-        status: "Pending",
-    },
-];
+import Link from 'next/link';
 
 const UserTable = () => {
     const { data: userData, isLoading, error, isError } = useQuery({
         queryKey: ['users'],
         queryFn: getAllUsers,
     })
-
-    console.log(isLoading, error, isError, isLoading );
 
     return (
 
@@ -78,14 +42,14 @@ const UserTable = () => {
                             {userData?.data.map((user: User, key:number) => (
                                 <tr key={key}>
                                     <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                                        <h5 className="font-medium text-black dark:text-white">
+                                        <Link href={`/users/${user._id}`} className="font-medium text-black dark:text-white">
                                             {user.fullName}
-                                        </h5>
+                                        </Link>
                                         <p className="text-sm">{user.email}</p>
                                     </td>
                                     <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                                         <p className="text-black dark:text-white">
-                                            teacher
+                                            {user.role}
                                         </p>
                                     </td>
                                     <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">

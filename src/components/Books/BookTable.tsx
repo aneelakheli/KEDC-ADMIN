@@ -9,8 +9,11 @@ import { Book } from "@/types/book";
 import { useQuery } from "@tanstack/react-query";
 import { getAllBooks } from '@/serivces/bookService';
 import { FaPlus } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
 
 const BookTable = () => {
+    const { user } = useAuth();
+
     const { data: userData, isLoading, error, isError } = useQuery({
         queryKey: ['books'],
         queryFn: getAllBooks,
@@ -65,7 +68,7 @@ const BookTable = () => {
                                     </div>
                                     <Link href={`/books/${book._id}`}>
                                         <p className="text-sm font-semibold text-black dark:text-white">
-                                            {book.name}  
+                                            {book.name}
                                         </p>
                                     </Link>
                                 </div>
@@ -90,10 +93,14 @@ const BookTable = () => {
                         </div>
                     ))}
                 </div>
-                <Link href="/books/add" className="flex flex-col gap-2 justify-center items-center border border-stroke font-medium py-4 my-4">
-                    <FaPlus className="text-xl"/>
-                    Add New Book
-                </Link>
+                {
+                    ['Admin', 'Auther'].includes(user.role) && (
+                        <Link href="/books/add" className="flex flex-col gap-2 justify-center items-center border border-stroke font-medium py-4 my-4">
+                            <FaPlus className="text-xl" />
+                            Add New Book
+                        </Link>
+                    )
+                }
 
             </div>
         </div>

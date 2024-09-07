@@ -1,4 +1,4 @@
-import { getNewComments, getPublishedComments, updateCommentStatus } from '@/serivces/catalogueService';
+import { getPublishedComments, updateCommentStatus } from '@/serivces/catalogueService';
 import { Comment } from '@/types/comment';
 import notify from '@/utils/notify';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

@@ -18,3 +18,12 @@ export const addSubject = async (subjectData: Category) => {
         throw error;
     }
 };
+
+export const deleteSubject = async (id: String) => {
+    try {
+        const response = await del(`/category/${id}`);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};

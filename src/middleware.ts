@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 
 export async function middleware(req) {
+    console.log("Inside Middleware");
     // Example: Parse user role from cookies, headers, or tokens
     const authorizationHeader = req.headers.get('authorization');
 
@@ -12,7 +13,6 @@ export async function middleware(req) {
 
     // Extract the token from the Authorization header
     const token = authorizationHeader.split(' ')[1];
-
     
     if (!token) {
         return NextResponse.redirect(new URL('/login', req.url));
@@ -24,9 +24,7 @@ export async function middleware(req) {
     const url = req.nextUrl.clone();
 
     // Define protected routes and roles
-    const protectedRoutes = {
-        '/admin': ['admin'],
-        '/editor': ['admin', 'author'],
+    const protectedRoutes = {   
         '/user': ['admin', 'author', 'teacher'],
     };
 

@@ -1,16 +1,11 @@
 'use client'
-import Image from "next/image";
-import moment from 'moment';
-
 import Link from "next/link";
-import { Package } from "@/types/package";
-import { User } from "@/types/user";
-import { Book } from "@/types/book";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
 import { deleteBook, getOneBook } from '@/serivces/bookService';
 import { useState } from "react";
 import notify from "@/utils/notify";
+import { useAuth } from "@/context/AuthContext";
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
   return (
@@ -24,6 +19,8 @@ function ErrorComponent({ errorMessage }: { errorMessage: string }) {
 }
 
 function BookDetail({ id }) {
+  const { user } = useAuth();
+
   const { data: bookData, isSuccess, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['books', id],
     queryFn: () => getOneBook(id),
@@ -31,8 +28,8 @@ function BookDetail({ id }) {
   console.log(isLoading, error, isError, isLoading, bookData?.data);
 
 
-  const DeleteBookComponent = ({ bookId }:{bookId:String}) => {
-    
+  const DeleteBookComponent = ({ bookId }: { bookId: String }) => {
+
     const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
 
@@ -147,20 +144,24 @@ function BookDetail({ id }) {
                 {bookData.description} Some random description here
               </div>
             </div>
-            <div className="flex space-x-4 mt-8">
-              <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
-                Edit
-              </Link>
-              <DeleteBookComponent bookId={id}/>
-            </div>
+            {['Admin', 'Author'].includes(user.role) && (
+              <div className="flex space-x-4 mt-8">
+                <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                  Edit
+                </Link>
+                {['Admin', 'Author'].includes(user.role) && (
+                  <DeleteBookComponent bookId={id} />
+                )}
+              </div>
+            )}
           </div>
         )}
 
-        {!bookData && (
-          <div className="w-full flex justify-center items-center my-16">
-            <div className="text-xl font-semibold my-4 ">No book found with id {id}</div>
-          </div>
-        )}
+      {!bookData && (
+        <div className="w-full flex justify-center items-center my-16">
+          <div className="text-xl font-semibold my-4 ">No book found with id {id}</div>
+        </div>
+      )}
 
     </div>
   )
