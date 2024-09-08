@@ -12,8 +12,10 @@ import AddSubjectModal from "../Subject/AddSubjectModal";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import notify from "@/utils/notify";
+import { deleteEvent, getAllEvents } from "@/serivces/eventService";
+import { Event } from "@/types/event";
 
-const DeleteSubjectComponent = ({ subjectId, refetch }: { subjectId: String }) => {
+const DeleteEventComponent = ({ eventId, refetch }: { eventId: String }) => {
 
     const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
@@ -21,7 +23,7 @@ const DeleteSubjectComponent = ({ subjectId, refetch }: { subjectId: String }) =
     const handleDelete = async () => {
         setIsDeletionLoading(true);
         try {
-            const response = await deleteSubject(subjectId);
+            const response = await deleteEvent(eventId);
 
             if (response.success === true) {
                 console.log("Subject successfully deleted", response.data);
@@ -64,22 +66,20 @@ const DeleteSubjectComponent = ({ subjectId, refetch }: { subjectId: String }) =
     )
 }
 
-
-const CategoryTable = () => {
+const EventsTable = () => {
     const { user } = useAuth();
 
     const [showSubjectModal, setShowSubjectModal] = useState(false);
     const toggleShowModal = () => setShowSubjectModal(!showSubjectModal)
 
-    const { data: userData, isLoading, error, isError, refetch } = useQuery({
-        queryKey: ['subject'],
-        queryFn: getAllSubjects,
+    const { data: eventsData, isLoading, error, isError, refetch } = useQuery({
+        queryKey: ['events'],
+        queryFn: getAllEvents,
     })
 
-    console.log(isLoading, error, isError, isLoading, userData?.data);
+    console.log(isLoading, error, isError, isLoading, eventsData?.data);
 
     return (
-
         <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
             <div className="max-w-full overflow-x-auto">
 
@@ -93,7 +93,7 @@ const CategoryTable = () => {
                         </div>
                     </div>
 
-                    {userData?.data?.map((subject: Category, key: number) => (
+                    {eventsData?.data?.map((subject: Event, key: number) => (
                         <div
                             className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
                             key={key}
@@ -105,7 +105,7 @@ const CategoryTable = () => {
                                             src={subject.image}
                                             layout="fill"
                                             objectFit="cover"
-                                            alt="userData"
+                                            alt="eventsData"
                                         />
                                     </div>
                                     <Link href={`/books/${subject._id}`}>
@@ -119,16 +119,16 @@ const CategoryTable = () => {
                                 <p className="text-sm text-black dark:text-white">{subject.description}</p>
                             </div>
                             {['Admin'].includes(user.role) && (
-                                <DeleteSubjectComponent subjectId={subject._id} refetch={refetch}/>
+                                <DeleteEventComponent subjectId={subject._id} refetch={refetch}/>
                             )}
                         </div>
                     ))}
                 </div>
                 {
-                    ['Admin', 'Auther'].includes(user.role) && (
+                    ['Admin'].includes(user.role) && (
                         <div className="flex flex-col gap-2 justify-center items-center border border-stroke font-medium py-4 my-4" onClick={() => toggleShowModal()}>
                             <FaPlus className="text-xl" />
-                            Add New Subject
+                            Add New Event
                         </div>
                     )
                 }
@@ -140,4 +140,4 @@ const CategoryTable = () => {
     );
 };
 
-export default CategoryTable;
+export default EventsTable;

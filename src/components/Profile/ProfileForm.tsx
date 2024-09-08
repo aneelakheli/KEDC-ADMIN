@@ -7,15 +7,17 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { getAllSubjects } from "@/serivces/subjectService";
 import { useAuth } from "@/context/AuthContext";
+import { CiCircleCheck } from 'react-icons/ci';
+import { MdOutlinePendingActions } from 'react-icons/md';
 
-function UserDetailForm({ id }: { id: string }) {
-    const {user} = useAuth();
+function ProfileForm() {
+    const { user } = useAuth();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState();
     const { data: userData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
-        queryKey: ['book', id],
-        queryFn: () => getOneUser(id),
-        enabled: !!id,
+        queryKey: ['book', user.id],
+        queryFn: () => getOneUser(user.id),
+        enabled: !!user.id,
     });
 
     const { data: subjectData, isLoading: isSubjectLoading, error: subjectError, isError: isSubjectError } = useQuery({
@@ -27,10 +29,7 @@ function UserDetailForm({ id }: { id: string }) {
         fullName: '',
         contactNo: '',
         email: '',
-        role: '',
         schoolName: '',
-        allowedSubjects: '',
-        isAccepted: false
     });
     // const [isLoading, setIsLoading] = useState(false);
 
@@ -40,7 +39,6 @@ function UserDetailForm({ id }: { id: string }) {
         if (userData) {
             setFormData(userData.data);
         }
-        console.log(userData);
     }, [userData]);
 
     const handleInputChange = (e) => {
@@ -85,39 +83,6 @@ function UserDetailForm({ id }: { id: string }) {
         return newErrors;
     };
 
-    const handleCreate = async (e) => {
-        e.preventDefault();
-        const newErrors = validateForm();
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
-        else {
-            try {
-                const response = await addAbout(formData);
-
-                if (response.success === true) {
-                    console.log("res", response.data);
-                    notify("About Page successfully uploaded", "success")
-                    // router.push(`/about`);
-                }
-                else {
-                    console.error("Error uploading book", response, "Data:", response.data);
-                    notify("Failed Uploading About Page", "error")
-                }
-            }
-            catch (error) {
-                console.error("Caught Error", error.status, error.data.error);
-                notify("Failed Uploading About Page", "error")
-                return;
-            }
-            finally {
-                setIsLoading(false);
-            }
-
-        }
-    };
-
     const DeleteUserComponent = ({ userId }: { userId: String }) => {
         const router = useRouter();
         const [isDeletionLoading, setIsDeletionLoading] = useState(false);
@@ -129,7 +94,6 @@ function UserDetailForm({ id }: { id: string }) {
                 const response = await deleteUser(userId);
 
                 if (response.success === true) {
-                    console.log("User successfully deleted", response.data);
                     notify("User successfully deleted!", "success");
                     router.push(`/users/`);
                 }
@@ -169,64 +133,6 @@ function UserDetailForm({ id }: { id: string }) {
         )
     }
 
-    const ApproveUserComponent = ({ userId }: { userId: string }) => {
-        const router = useRouter();
-        const [isApprovalLoading, setIsApprovalLoading] = useState(false);
-
-        const handleApprove = async () => {
-            setIsApprovalLoading(true);
-            try {
-                let response;
-                if (!formData?.isAccepted) {
-                    response = await approveUser(userId, { isAccepted: true })
-                }
-                else {
-                    response = await approveUser(userId, { isAccepted: false })
-
-                }
-                console.log("Response", response)
-                if (response.success === true) {
-                    console.log("User successfully approved", response.data);
-                    notify("User successfully approved!", "success");
-                    router.push(`/users/`);
-                }
-                else {
-                    console.error("Error approving User", response, "Data:", response.data);
-                }
-            }
-            catch (error) {
-                console.error("Caught Error", error);
-                notify("Error approving user","error")
-                return;
-            }
-            finally {
-                setIsApprovalLoading(false);
-            }
-        }
-
-        return (
-            <div className="flex justify-center items-center">
-                {isApprovalLoading ? (
-                    <button type="button" className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-red rounded hover:bg-red">
-                        <div
-                            className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-                            role="status">
-                            <span
-                                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-                            >Loading...
-                            </span>
-                        </div>
-                        {(!formData?.isAccepted) ? 'Approve' : 'UnApprove'}
-                    </button>
-                ) : (
-                    <button type="button" className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600" onClick={handleApprove}>
-                        {(!formData?.isAccepted) ? 'Approve' : 'UnApprove'}
-                    </button>
-                )}
-            </div>
-        )
-    }
-
     const handleEdit = async (e) => {
         e.preventDefault();
         const newErrors = validateForm();
@@ -236,7 +142,7 @@ function UserDetailForm({ id }: { id: string }) {
         }
         else {
             try {
-                const response = await updateUser(id, formData);
+                const response = await updateUser(user.id, formData);
                 console.log("Response status", response.success, response.success === true, response.success == true);
                 if (response.success === true) {
                     console.log("res", response.data);
@@ -290,9 +196,9 @@ function UserDetailForm({ id }: { id: string }) {
                     </h3>
                 </div>
                 <div className="p-7">
-                    {id && isQueryLoading ?
+                    {user.id && isQueryLoading ?
                         (<LoadingComponent />) :
-                        (id && isQueryError) ?
+                        (user.id && isQueryError) ?
                             (<ErrorComponent errorMessage={`Error fetching user: ${queryError.message}`} />) :
                             (<form onSubmit={handleEdit}>
                                 <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
@@ -423,6 +329,7 @@ function UserDetailForm({ id }: { id: string }) {
                                         id="schoolName"
                                         value={formData?.schoolName}
                                         onChange={handleInputChange}
+                                        disabled = {formData.isAccepted?true:false}
                                     />
                                     {errors.schoolName && <p className="text-red text-xs mt-1">{errors.schoolName}</p>}
 
@@ -437,6 +344,7 @@ function UserDetailForm({ id }: { id: string }) {
                                             value={formData?.allowedSubjects}
                                             onChange={handleInputChange}
                                             multiple
+                                            disabled
                                             className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                                         >
                                             {subjectData?.data?.map((category) =>
@@ -459,6 +367,7 @@ function UserDetailForm({ id }: { id: string }) {
                                             name="role"
                                             value={formData?.role}
                                             onChange={handleInputChange}
+                                            disabled
                                             className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                                         >
                                             <option value="">Select Subject</option>
@@ -471,27 +380,20 @@ function UserDetailForm({ id }: { id: string }) {
                                     {errors.role && <p className="text-red text-xs mt-1">{errors.role}</p>}
                                 </div>
 
-                                <div className="mb-5.5">
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
-                                            name="isAccepted"
-                                            checked={formData?.isAccepted}
-                                            onChange={handleInputChange}
-                                            disabled
-                                            className="h-8 w-8 rounded border-stroke dark:border-strokedark text-primary focus:ring-2 focus:ring-primary"
-                                        />
-                                        <label className="text-sm font-medium text-black dark:text-white">
-                                            Approval Status
-                                        </label>
-                                    </div>
+                                <div className="my-8">
+                                    {formData.isAccepted ? (
+                                        <div className='flex items-center gap-2 text-2xl text-green-500'>
+                                            <CiCircleCheck className='text-4xl'/> Approved
+                                        </div>
+                                    ) : (
+                                        <div className='flex items-center gap-2 text-2xl text-red'>
+                                            <MdOutlinePendingActions /> Not Approved
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex justify-end gap-4.5 mt-8">
-                                    {['Admin'].includes(user.role) && (
-                                        <ApproveUserComponent userId={id} />
-                                    )}
-                                    <DeleteUserComponent userId={id} />
+                                    {/* <DeleteUserComponent userId={user.id} /> */}
                                     <button
                                         className="flex justify-center rounded bg-green-600 px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                         type="submit"
@@ -506,4 +408,4 @@ function UserDetailForm({ id }: { id: string }) {
     )
 }
 
-export default UserDetailForm
+export default ProfileForm

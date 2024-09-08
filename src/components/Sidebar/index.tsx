@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { FaBook } from "react-icons/fa";
+import { FaBook, FaCalendarDay } from "react-icons/fa";
 import { IoDocumentsSharp } from "react-icons/io5";
 import { MdContacts, MdOutlineAbc } from "react-icons/md";
 import { TfiLayoutSlider } from "react-icons/tfi";
@@ -96,6 +96,14 @@ const menuGroups = [
         ),
         label: "Subjects",
         route: "/subjects",
+        users: ['Admin']
+      },
+      {
+        icon: (
+          <FaCalendarDay />
+        ),
+        label: "Events",
+        route: "/events",
         users: ['Admin']
       },
       {
@@ -477,7 +485,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {group.menuItems.map((menuItem, menuIndex) => {
-                    console.log(menuItem?.user,"-------------------",menuItem?.users)
+                    console.log(menuItem?.user, "-------------------", menuItem?.users)
                     if (menuItem?.users.includes(user.role)) {
                       return (<>
                         <SidebarItem

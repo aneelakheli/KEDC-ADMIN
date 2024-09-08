@@ -1,28 +1,23 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import ProfileForm from "@/components/Profile/ProfileForm";
+import BookTable from "@/components/Books/BookTable";
+import CategoryTable from "@/components/categories/CategoryTable";
+import EventsTable from "@/components/Events/EventsTable";
 
-export const metadata: Metadata = {
-  title: "KEDC",
-  description:
-    "Kantipur Education Development Council",
-};
-
-const Profile = () => {
+const Books = () => {
   const breadcrumbs = [
     { label: "Dashboard", href: "/" },
-    { label: "Profile" },
-  ];
+    { label: "Events" }
+];
 
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-242.5">
         <Breadcrumb breadcrumbs={breadcrumbs} />
-        <ProfileForm />
+        <EventsTable/>
       </div>
     </DefaultLayout>
   );
 };
 
-export default Profile;
+export default Books;
