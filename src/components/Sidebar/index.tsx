@@ -56,7 +56,7 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "/",
-        users: ['Admin']
+        users: ['Admin','Teacher','Author']
       },
       {
         icon: (
