@@ -149,7 +149,7 @@ function Register() {
             });
             if (response.success === true) {
                 dispatch({ type: 'SET_SUCCESS', value: response.message });
-                router.push('/login', { scroll: false });
+                router.push('/dashboard/login', { scroll: false });
             } else {
                 dispatch({ type: 'SET_ERROR', field: 'form', value: response.message || 'Registration failed. Please try again.' });
             }
@@ -253,7 +253,7 @@ function Register() {
                         <div className="mt-4 flex items-center justify-between">
                             <span className="border-b w-1/5 md:w-1/4"></span>
                             <p className="text-sm text-gray-500">Already have an account ?</p>
-                            <Link href="/login" className="text-xs text-gray-500 uppercase">Log in</Link>
+                            <Link href="/dashboard/login" className="text-xs text-gray-500 uppercase">Log in</Link>
                             <span className="border-b w-1/5 md:w-1/4"></span>
                         </div>
                     </div>

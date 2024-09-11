@@ -1,19 +1,20 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import BookForm from "@/components/Books/BookForm";
+import AboutForm from "@/components/AboutUs/AboutForm";
 
-const Edit = ({params}) => {
+const Edit = ({params}:{params:{id:string}}) => {
     const breadcrumbs = [
         { label: "Dashboard", href: "/" },
-        { label: "Books", href: "/books" },
-        { label: "Edit Book" },
+        { label: "About", href: "/about" },
+        { label: "Edit About" },
     ];
 
     return (
         <DefaultLayout>
             <div className="mx-auto max-w-242.5">
                 <Breadcrumb breadcrumbs={breadcrumbs} />
-                <BookForm bookId={params.id}/>
+                <AboutForm aboutId={params.id}/>
             </div>
         </DefaultLayout>
     );

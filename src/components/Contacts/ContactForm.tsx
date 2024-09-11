@@ -63,7 +63,7 @@ function ContactForm({ bookId }) {
 
                 if (response.success === true) {
                     console.log("Contact successfully added", response.data);
-                    router.push(`/contacts/`);
+                    router.push(`/dashboard/contacts/`);
                 } else {
                     console.error("Error adding contact", response, "Data:", response.data);
                 }

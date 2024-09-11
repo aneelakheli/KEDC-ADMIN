@@ -95,7 +95,7 @@ function ProfileForm() {
 
                 if (response.success === true) {
                     notify("User successfully deleted!", "success");
-                    router.push(`/users/`);
+                    router.push(`/dashboard/users/`);
                 }
                 else {
                     console.error("Error deleting User", response, "Data:", response.data);
@@ -347,8 +347,8 @@ function ProfileForm() {
                                             disabled
                                             className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                                         >
-                                            {subjectData?.data?.map((category) =>
-                                                <option value={category._id}>{category.name}</option>
+                                            {subjectData?.data?.map((category:any, key:string) =>
+                                                <option value={category._id} key={key}>{category.name}</option>
                                             )}
                                         </select>
                                     </div>

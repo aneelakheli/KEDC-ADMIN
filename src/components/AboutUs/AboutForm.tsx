@@ -8,7 +8,7 @@ import { addAbout, getOneAbout, updateAbout } from "@/serivces/aboutService";
 import ReactQuill from "react-quill";
 import notify from "@/utils/notify";
 
-function AboutForm({ aboutId }: { aboutId: string }) {
+function AboutForm({ aboutId }: { aboutId?: string }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState();
     const { data: bookData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
@@ -84,7 +84,7 @@ function AboutForm({ aboutId }: { aboutId: string }) {
                 if (response.success === true) {
                     console.log("res", response.data);
                     notify("About Page successfully uploaded", "success")
-                    // router.push(`/about`);
+                    // router.push(`/dashboard/about`);
                 }
                 else {
                     console.error("Error uploading book", response, "Data:", response.data);

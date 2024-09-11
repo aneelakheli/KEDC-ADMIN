@@ -13,7 +13,7 @@ import { getAllGrades } from "@/serivces/gradeService";
 import AddGradeModal from "../Grade/AddGradeModal";
 import notify from "@/utils/notify";
 
-function BookForm({ bookId }) {
+function BookForm({ bookId }:{bookId?:string}) {
     const router = useRouter();
     const { data: bookData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
         queryKey: ['book', bookId],
@@ -46,7 +46,6 @@ function BookForm({ bookId }) {
         queryKey: ['subject'],
         queryFn: () => getAllSubjects(),
     });
-    console.log("subjecDtata", isSubjectError, subjectError?.data, isSubjectError, isSubjectLoading, subjectData)
 
     // Grade Field Options
     const [showGradeModal, setShowGradeModal] = useState(false);
@@ -64,13 +63,13 @@ function BookForm({ bookId }) {
         }
     }, [bookData]);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e:any) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         setErrors({ ...errors, [name]: '' });
     };
 
-    const handleImageChange = (e) => {
+    const handleImageChange = (e:any)=> {
         const file = e.target.files[0];
         if (file) {
             const imageUrl = URL.createObjectURL(file);
@@ -113,7 +112,7 @@ function BookForm({ bookId }) {
                 if (response.success === true) {
                     console.log("Book successfully uploaded", response.data);
                     notify("Book Uploaded Successfully", "success")
-                    router.push(`/books/${response.data._id}`);
+                    router.push(`/dashboard/books/${response.data._id}`);
                 }
                 else {
                     console.error("Error uploading book", response, "Data:", response.data);
@@ -258,8 +257,8 @@ function BookForm({ bookId }) {
                                     className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                 >
                                     <option value="">Select Subject</option>
-                                    {subjectData?.data?.map((subject) =>
-                                        <option value={subject._id}>{subject.name}</option>
+                                    {subjectData?.data?.map((subject:any, key:string) =>
+                                        <option value={subject._id} key={key}>{subject.name}</option>
                                     )}
                                 </select>
                                 <Tooltip content="Add New Category" className="">
@@ -310,7 +309,7 @@ function BookForm({ bookId }) {
                                     className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                 >
                                     <option value="">Select Grade</option>
-                                    {gradeData?.data?.map((grade) =>
+                                    {gradeData?.data?.map((grade:any, key:string) =>
                                         <option value={grade._id}>{grade.name}</option>
                                     )}
                                 </select>

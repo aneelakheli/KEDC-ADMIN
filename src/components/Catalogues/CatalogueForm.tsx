@@ -131,7 +131,7 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
                 console.log('==============================');
                 if (response.success === true) {
                     console.log("Catalogue successfully added", response.data);
-                    router.push(`/catalogues`);
+                    router.push(`/dashboard/catalogues`);
                 }
                 else {
                     console.error("Error uploading book", response, "Data:", response.data);
@@ -262,8 +262,8 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
                                     className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                 >
                                     <option value="">Select Subject</option>
-                                    {subjectData?.data?.map((category) =>
-                                        <option value={category._id}>{category.name}</option>
+                                    {subjectData?.data?.map((category:any, key:string) =>
+                                        <option value={category._id} key={key}>{category.name}</option>
                                     )}
                                 </select>
                                 <Tooltip content="Add New Subject" className="">

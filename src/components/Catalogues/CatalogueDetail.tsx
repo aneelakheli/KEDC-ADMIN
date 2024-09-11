@@ -53,7 +53,7 @@ function CatalogueDetail({ id }: { id: String }) {
         if (response.success === true) {
           console.log("Catalgoue successfully deleted", response.data);
           notify("Catalgoue successfully deleted!", "success");
-          router.push(`/catalogues/`);
+          router.push(`/dashboard/catalogues/`);
         }
         else {
           console.error("Error deleting Catalogue", response, "Data:", response.data);

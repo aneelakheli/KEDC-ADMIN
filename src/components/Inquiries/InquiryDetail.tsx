@@ -40,7 +40,7 @@ function InquiryDetail({ id }) {
 
       if (response.success === true) {
         console.log("Inquiry successfully deleted", response.data);
-        router.push(`/inquiries`);
+        router.push(`/dashboard/dashboard/inquiries`);
       }
       else {
         console.error("Error deleting book", response, "Data:", response.data);

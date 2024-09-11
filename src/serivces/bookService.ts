@@ -10,7 +10,7 @@ export const getAllBooks = async () => {
     }
 };
 
-export const getOneBook = async (id: string) => {
+export const getOneBook = async (id?: string) => {
     try {
         const response = await get(`/book/${id}`);
         return response.data;

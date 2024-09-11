@@ -55,7 +55,7 @@ const LoginComponent = () => {
             console.log(formData);
             console.log("Respnseabcd ====",response, "success",response.success);
             if (response.success) {
-                // router.push('/home'); // Redirect to dashboard on success
+                // router.push('dashboard/home'); // Redirect to dashboard on success
                 // console.log("response ====",response.data);
                 localStorage.setItem('token', response.data);
             } else {
@@ -125,7 +125,7 @@ const LoginComponent = () => {
 
                         <div className="mt-4 flex items-center justify-between">
                             <span className="border-b w-1/5 md:w-1/4"></span>
-                            <Link href="/register" className="text-xs text-gray-500 uppercase">or sign up</Link>
+                            <Link href="/dashboard/register" className="text-xs text-gray-500 uppercase">or sign up</Link>
                             <span className="border-b w-1/5 md:w-1/4"></span>
                         </div>
                     </div>

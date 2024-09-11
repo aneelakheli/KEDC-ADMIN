@@ -99,7 +99,7 @@ function UserDetailForm({ id }: { id: string }) {
                 if (response.success === true) {
                     console.log("res", response.data);
                     notify("About Page successfully uploaded", "success")
-                    // router.push(`/about`);
+                    // router.push(`/dashboard/about`);
                 }
                 else {
                     console.error("Error uploading book", response, "Data:", response.data);
@@ -131,7 +131,7 @@ function UserDetailForm({ id }: { id: string }) {
                 if (response.success === true) {
                     console.log("User successfully deleted", response.data);
                     notify("User successfully deleted!", "success");
-                    router.push(`/users/`);
+                    router.push(`/dashboard/users/`);
                 }
                 else {
                     console.error("Error deleting User", response, "Data:", response.data);
@@ -188,7 +188,7 @@ function UserDetailForm({ id }: { id: string }) {
                 if (response.success === true) {
                     console.log("User successfully approved", response.data);
                     notify("User successfully approved!", "success");
-                    router.push(`/users/`);
+                    router.push(`/dashboard/users/`);
                 }
                 else {
                     console.error("Error approving User", response, "Data:", response.data);
