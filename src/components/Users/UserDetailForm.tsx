@@ -1,5 +1,5 @@
 'use client'
-import { updateAbout } from '@/serivces/aboutService';
+import { addAbout, updateAbout } from '@/serivces/aboutService';
 import { getOneUser, updateUser, deleteUser, approveUser } from '@/serivces/userService';
 import notify from '@/utils/notify';
 import { useQuery } from '@tanstack/react-query';

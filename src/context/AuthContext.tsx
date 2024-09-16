@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', data.token);
             const decoded = jwtDecode(data.token);
             setUser({ id: decoded.id, role: decoded.role });
-            router.push('/dashboard/');
+            router.push('/');
         } else {
             console.error(data.message);
         }
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);
-        router.push('/dashboard/login');
+        router.push('/login');
     };
 
     return (

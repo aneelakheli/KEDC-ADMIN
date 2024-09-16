@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import notify from "@/utils/notify";
 import { deleteEvent, getAllEvents } from "@/serivces/eventService";
 import { Event } from "@/types/event";
+import AddEventModal from "./AddEventModal";
 
 const DeleteEventComponent = ({ eventId, refetch }: { eventId: String }) => {
 
@@ -55,11 +56,11 @@ const DeleteEventComponent = ({ eventId, refetch }: { eventId: String }) => {
                         >Loading...
                         </span>
                     </div>
-                    <MdDelete/>
+                    <MdDelete />
                 </button>
             ) : (
                 <button className="px-4 py-2 text-white bg-red rounded hover:bg-red" onClick={handleDelete}>
-                    <MdDelete/>
+                    <MdDelete />
                 </button>
             )}
         </div>
@@ -69,8 +70,8 @@ const DeleteEventComponent = ({ eventId, refetch }: { eventId: String }) => {
 const EventsTable = () => {
     const { user } = useAuth();
 
-    const [showSubjectModal, setShowSubjectModal] = useState(false);
-    const toggleShowModal = () => setShowSubjectModal(!showSubjectModal)
+    const [showEventModal, setShowEventModal] = useState(false);
+    const toggleShowModal = () => setShowEventModal(!showEventModal)
 
     const { data: eventsData, isLoading, error, isError, refetch } = useQuery({
         queryKey: ['events'],
@@ -85,41 +86,47 @@ const EventsTable = () => {
 
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-                        <div className="col-span-3 hidden items-center sm:flex">
+                        <div className="col-span-2 flex items-center">
+                            <p className="font-medium">Date</p>
+                        </div>
+                        <div className="col-span-2 hidden items-center sm:flex">
                             <p className="font-medium">Name</p>
                         </div>
-                        <div className="col-span-3 flex items-center">
+                        <div className="col-span-2 flex items-center">
                             <p className="font-medium">Description</p>
                         </div>
                     </div>
 
-                    {eventsData?.data?.map((subject: Event, key: number) => (
+                    {eventsData?.data?.map((event: Event, key: number) => (
                         <div
                             className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
                             key={key}
                         >
-                            <div className="col-span-4 flex items-center">
+                            <div className="col-span-2 flex items-center">
+                                <p className="text-sm text-black dark:text-white">{event.eventDate}</p>
+                            </div>
+                            <div className="col-span-2 flex items-center">
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                                     <div className="relative h-22 w-18 rounded-md">
                                         <Image
-                                            src={subject.image}
+                                            src={event.icon}
                                             layout="fill"
                                             objectFit="cover"
                                             alt="eventsData"
                                         />
                                     </div>
-                                    <Link href={`/books/${subject._id}`}>
+                                    <Link href={`/books/${event._id}`}>
                                         <p className="text-sm font-semibold text-black dark:text-white">
-                                            {subject.name}
+                                            {event.title}
                                         </p>
                                     </Link>
                                 </div>
                             </div>
                             <div className="col-span-2 flex items-center">
-                                <p className="text-sm text-black dark:text-white">{subject.description}</p>
+                                <p className="text-sm text-black dark:text-white">{event.description}</p>
                             </div>
                             {['Admin'].includes(user.role) && (
-                                <DeleteEventComponent subjectId={subject._id} refetch={refetch}/>
+                                <DeleteEventComponent eventId={event._id} refetch={refetch} />
                             )}
                         </div>
                     ))}
@@ -134,7 +141,7 @@ const EventsTable = () => {
                 }
 
             </div>
-            <AddSubjectModal showModal={showSubjectModal} toggleShowModal={toggleShowModal} />
+            <AddEventModal showModal={showEventModal} toggleShowModal={toggleShowModal} />
 
         </div>
     );

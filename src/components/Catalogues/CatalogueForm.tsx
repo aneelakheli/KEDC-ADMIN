@@ -131,7 +131,7 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
                 console.log('==============================');
                 if (response.success === true) {
                     console.log("Catalogue successfully added", response.data);
-                    router.push(`/dashboard/catalogues`);
+                    router.push(`/catalogues`);
                 }
                 else {
                     console.error("Error uploading book", response, "Data:", response.data);

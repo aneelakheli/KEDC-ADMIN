@@ -42,7 +42,7 @@ function BookDetail({ id }) {
         if (response.success === true) {
           console.log("Book successfully deleted", response.data);
           notify("Book successfully deleted!", "success");
-          router.push(`/dashboard/books/`);
+          router.push(`/books/`);
         }
         else {
           console.error("Error deleting Book", response, "Data:", response.data);

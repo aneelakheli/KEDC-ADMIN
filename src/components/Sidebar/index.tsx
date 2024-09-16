@@ -55,7 +55,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Dashboard",
-        route: "/dashboard/",
+        route: "/",
         users: ['Admin','Teacher','Author']
       },
       {
@@ -79,7 +79,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Users",
-        route: "/dashboard/users",
+        route: "/users",
         users: ['Admin']
       },
       {
@@ -87,7 +87,7 @@ const menuGroups = [
           <FaBook />
         ),
         label: "Books",
-        route: "/dashboard/books",
+        route: "/books",
         users: ['Admin', 'Author', 'Teacher']
       },
       {
@@ -95,7 +95,7 @@ const menuGroups = [
           <MdOutlineAbc />
         ),
         label: "Subjects",
-        route: "/dashboard/subjects",
+        route: "/subjects",
         users: ['Admin']
       },
       {
@@ -103,7 +103,7 @@ const menuGroups = [
           <FaCalendarDay />
         ),
         label: "Events",
-        route: "/dashboard/events",
+        route: "/events",
         users: ['Admin']
       },
       {
@@ -111,15 +111,15 @@ const menuGroups = [
           <TbNumbers />
         ),
         label: "Grades",
-        route: "/dashboard/grade",
+        route: "/grade",
         users: ['Admin']
       },
       {
         icon: (
           <IoDocumentsSharp />
         ),
-        label: "Catalogues",
-        route: "/dashboard/catalogues",
+        label: "Resources",
+        route: "/catalogues",
         users: ['Admin', 'Author', 'Teacher']
       },
       {
@@ -127,7 +127,7 @@ const menuGroups = [
           <MdContacts />
         ),
         label: "Contacts",
-        route: "/dashboard/contacts",
+        route: "/contacts",
         users: ['Admin']
       },
       {
@@ -135,7 +135,7 @@ const menuGroups = [
           <SiGoogleforms />
         ),
         label: "Inquiry",
-        route: "/dashboard/inquiries",
+        route: "/inquiries",
         users: ['Admin']
       },
 
@@ -144,7 +144,7 @@ const menuGroups = [
           <TfiLayoutSlider />
         ),
         label: "Slider",
-        route: "/dashboard/slider",
+        route: "/slider",
         users: ['Admin']
       },
       {
@@ -152,7 +152,7 @@ const menuGroups = [
           <FaCircleInfo />
         ),
         label: "About",
-        route: "/dashboard/about",
+        route: "/about",
         users: ['Admin']
       },
       {
@@ -176,7 +176,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Profile",
-        route: "/dashboard/profile",
+        route: "/profile",
         users: ['Admin', 'Author', 'Teacher']
       },
     ],
@@ -196,11 +196,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       >
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-          <Link href="/dashboard/">
+          <Link href="/">
             <Image
               width={200}
               height={32}
-              src={"/images/logo/logo.png"}
+              src={"/dashboard/images/logo/logo.png"}
               alt="Logo"
               priority
             />

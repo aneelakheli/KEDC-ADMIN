@@ -112,7 +112,7 @@ function BookForm({ bookId }:{bookId?:string}) {
                 if (response.success === true) {
                     console.log("Book successfully uploaded", response.data);
                     notify("Book Uploaded Successfully", "success")
-                    router.push(`/dashboard/books/${response.data._id}`);
+                    router.push(`/books/${response.data._id}`);
                 }
                 else {
                     console.error("Error uploading book", response, "Data:", response.data);

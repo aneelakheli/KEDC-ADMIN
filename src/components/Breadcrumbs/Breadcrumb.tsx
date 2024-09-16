@@ -1,4 +1,7 @@
+'use client'
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface BreadcrumbItem {
   label: string;
@@ -10,8 +13,10 @@ interface BreadcrumbProps {
 }
 
 const Breadcrumb = ({ breadcrumbs }: BreadcrumbProps) => {
+  const router = useRouter();
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div onClick={()=>router.back()}><FaArrowLeft/></div>
       <h2 className="text-title-md2 font-semibold text-black dark:text-white">
         {breadcrumbs[breadcrumbs.length - 1].label}
       </h2>

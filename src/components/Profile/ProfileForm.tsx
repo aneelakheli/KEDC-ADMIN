@@ -95,7 +95,7 @@ function ProfileForm() {
 
                 if (response.success === true) {
                     notify("User successfully deleted!", "success");
-                    router.push(`/dashboard/users/`);
+                    router.push(`/users/`);
                 }
                 else {
                     console.error("Error deleting User", response, "Data:", response.data);

@@ -28,14 +28,14 @@ const SignIn: React.FC = () => {
               <Link className="mb-5.5 inline-block" href="/">
                 <Image
                   className="hidden dark:block"
-                  src={"/images/logo/logo.svg"}
+                  src={"/dashboard/images/logo/logo.svg"}
                   alt="Logo"
                   width={176}
                   height={32}
                 />
                 <Image
                   className="dark:hidden"
-                  src={"/images/logo/logo-dark.svg"}
+                  src={"/dashboard/images/logo/logo-dark.svg"}
                   alt="Logo"
                   width={176}
                   height={32}
@@ -294,7 +294,7 @@ const SignIn: React.FC = () => {
                 <div className="mt-6 text-center">
                   <p>
                     Don’t have any account?{" "}
-                    <Link href="/dashboard/auth/signup" className="text-primary">
+                    <Link href="/auth/signup" className="text-primary">
                       Sign Up
                     </Link>
                   </p>
