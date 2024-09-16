@@ -14,6 +14,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  basePath: '/dashboard',
 };
 
 export default nextConfig;
