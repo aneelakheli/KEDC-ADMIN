@@ -115,11 +115,11 @@ const EventsTable = () => {
                                             alt="eventsData"
                                         />
                                     </div>
-                                    <Link href={`/books/${event._id}`}>
+                                    <div>
                                         <p className="text-sm font-semibold text-black dark:text-white">
                                             {event.title}
                                         </p>
-                                    </Link>
+                                    </div>
                                 </div>
                             </div>
                             <div className="col-span-2 flex items-center">

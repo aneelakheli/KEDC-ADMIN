@@ -92,7 +92,7 @@ const ECommerce: React.FC = () => {
                       alt="eventsData"
                     />
                   </div>
-                  <Link href={`/books/${event._id}`}>
+                  <Link href={`#`}>
                     <p className="text-sm font-semibold text-black dark:text-white">
                       {event.title}
                     </p>

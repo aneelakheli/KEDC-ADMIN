@@ -39,7 +39,7 @@ const FreeCatalogues = () => {
                     >
                         <a href="#" className="bg-white w-full">
                             <div className="relative w-full">
-                                <img
+                                <Image
                                     alt="Preview_Image"
                                     loading="lazy"
                                     decoding="async"

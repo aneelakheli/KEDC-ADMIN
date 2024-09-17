@@ -6,6 +6,7 @@ import { deleteBook, getOneBook } from '@/serivces/bookService';
 import { useState } from "react";
 import notify from "@/utils/notify";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
   return (
@@ -101,7 +102,7 @@ function BookDetail({ id }) {
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col items-center">
-                <img
+                <Image
                   src={bookData.image}
                   alt="Book Image"
                   className="rounded-lg shadow-lg cursor-pointer"

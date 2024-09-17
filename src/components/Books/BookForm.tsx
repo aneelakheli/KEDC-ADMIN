@@ -247,7 +247,7 @@ function BookForm({ bookId }:{bookId?:string}) {
                         </div>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                Category
+                                Subject
                             </label>
                             <div className="flex items-center gap-2">
                                 <select

@@ -39,7 +39,7 @@ const PaidCatalogues = () => {
                     >
                         <a href="#" className="bg-white">
                             <div className="relative w-full">
-                                <img
+                                <Image
                                     alt="Cards"
                                     loading="lazy"
                                     decoding="async"

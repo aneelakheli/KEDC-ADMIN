@@ -108,7 +108,7 @@ const CategoryTable = () => {
                                             alt="userData"
                                         />
                                     </div>
-                                    <Link href={`/books/${subject._id}`}>
+                                    <Link href={`#`}>
                                         <p className="text-sm font-semibold text-black dark:text-white">
                                             {subject.name}
                                         </p>

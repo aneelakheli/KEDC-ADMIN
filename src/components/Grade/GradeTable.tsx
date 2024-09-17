@@ -22,6 +22,9 @@ const DeleteGradeComponent = ({ subjectId, refetch }: { subjectId: String }) => 
 
     const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
+    
+    const [showGradeModal, setShowGradeModal] = useState(false);
+    const toggleGradeModal = () => setShowGradeModal(!showGradeModal)
 
     const handleDelete = async () => {
         setIsDeletionLoading(true);
@@ -115,7 +118,7 @@ const GradeTable = () => {
                 </div>
                 {
                     ['Admin', 'Auther'].includes(user.role) && (
-                        <div className="flex flex-col gap-2 justify-center items-center border border-stroke font-medium py-4 my-4" onClick={() => toggleShowModal()}>
+                        <div className="flex flex-col gap-2 justify-center items-center border border-stroke font-medium py-4 my-4" onClick={() => toggleGradeModal()}>
                             <FaPlus className="text-xl" />
                             Add New Grade
                         </div>
