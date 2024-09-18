@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost', 'localhost:5006', 'cloudflare.com', 'stanford.edu'],
+    domains: ['localhost', 'localhost:5006', 'cloudflare.com', 'stanford.edu','http://202.51.83.166','https://202.51.83.166','kedc.edu.np'],
   },
   webpack: (config) => {
     config.resolve.alias.canvas = false;

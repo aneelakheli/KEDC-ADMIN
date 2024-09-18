@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
-import { deleteBook, getOneBook } from '@/serivces/bookService';
+import { deleteBook, getAllBooks, getOneBook } from '@/serivces/bookService';
 import { useState } from "react";
 import notify from "@/utils/notify";
 import { useAuth } from "@/context/AuthContext";
@@ -28,6 +28,10 @@ function BookDetail({ id }) {
   })
   console.log(isLoading, error, isError, isLoading, bookData?.data);
 
+  const { refetch: refetchBooks } = useQuery({
+    queryKey: ['books'],
+    queryFn: getAllBooks,
+  })
 
   const DeleteBookComponent = ({ bookId }: { bookId: String }) => {
 
@@ -43,6 +47,7 @@ function BookDetail({ id }) {
         if (response.success === true) {
           console.log("Book successfully deleted", response.data);
           notify("Book successfully deleted!", "success");
+          refetchBooks();
           router.push(`/books/`);
         }
         else {
