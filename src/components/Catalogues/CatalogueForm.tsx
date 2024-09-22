@@ -48,7 +48,6 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
     const toggleShowModal = () => setShowModal(!showModal)
 
     useEffect(() => {
-        console.log("Cata ==================", catalogueData)
         if (catalogueData) {
             setFormData(
                 {
@@ -110,8 +109,8 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.alt) newErrors.alt = 'Catalogue file alternative text is required ';
-        if (!formData.type) newErrors.type = 'Catalogue Type is required';
+        if (!formData.alt) newErrors.alt = 'Resource file alternative text is required ';
+        if (!formData.type) newErrors.type = 'Resource Type is required';
         if (!formData.catalogue) newErrors.catalogue = 'File is required';
 
         return newErrors;
@@ -130,7 +129,7 @@ function CatalogueForm({ catalogueId }: { catalogueId: String }) {
                 const response = await addCatalogue(formData);
                 console.log('==============================');
                 if (response.success === true) {
-                    console.log("Catalogue successfully added", response.data);
+                    console.log("Resource successfully added", response.data);
                     router.push(`/catalogues`);
                 }
                 else {

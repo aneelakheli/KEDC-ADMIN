@@ -24,7 +24,7 @@ const FreeCatalogues = () => {
             {catalogueData?.data?.length > 0 && (
                 <div className="px-4 py-6 md:px-6 xl:px-7.5">
                     <h4 className="text-xl font-semibold text-black dark:text-white">
-                        Free Catalogues
+                        Free Resources
                     </h4>
                 </div>
             )}
@@ -43,6 +43,8 @@ const FreeCatalogues = () => {
                                     alt="Preview_Image"
                                     loading="lazy"
                                     decoding="async"
+                                    width={64}
+                                    height={64}
                                     src={catalogue?.image || 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.Pneh22uyXw_rJ8leBae8VwHaHa%26pid%3DApi&f=1&ipt=fa7ede2f5d21d394a7b8636ac43d541093ed08a2026dac0a115ce3bccf84fdb3&ipo=images'}
                                     className="w-full h-64 object-cover"
                                 />

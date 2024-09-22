@@ -24,7 +24,7 @@ const PaidCatalogues = () => {
             {catalogueData?.data?.length > 0 && (
                 <div className="px-4 py-6 md:px-6 xl:px-7.5">
                     <h4 className="text-xl font-semibold text-black dark:text-white">
-                        Premium Catalogues
+                        Premium Resources
                     </h4>
                 </div>
             )}
@@ -43,6 +43,8 @@ const PaidCatalogues = () => {
                                     alt="Cards"
                                     loading="lazy"
                                     decoding="async"
+                                    width={64}
+                                    height={64}
                                     src={catalogue.image}
                                     className="w-full h-64 object-cover"
                                 />
