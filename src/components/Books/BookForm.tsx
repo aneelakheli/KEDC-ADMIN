@@ -13,7 +13,7 @@ import { getAllGrades } from "@/serivces/gradeService";
 import AddGradeModal from "../Grade/AddGradeModal";
 import notify from "@/utils/notify";
 
-function BookForm({ bookId }:{bookId?:string}) {
+function BookForm({ bookId }: { bookId?: string }) {
     const router = useRouter();
     const { data: bookData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
         queryKey: ['book', bookId],
@@ -36,7 +36,7 @@ function BookForm({ bookId }:{bookId?:string}) {
     const [isLoading, setIsLoading] = useState(false);
 
     const [errors, setErrors] = useState({});
-    
+
 
     // Category(Subject) Field Options
     const [showSubjectModal, setShowSubjectModal] = useState(false);
@@ -58,18 +58,18 @@ function BookForm({ bookId }:{bookId?:string}) {
 
     useEffect(() => {
         if (bookData) {
-            setFormData({...bookData, gradeId:bookData.grade?._id || '', categoryId:bookData.category?._id || ''});
+            setFormData({ ...bookData, gradeId: bookData.grade?._id || '', categoryId: bookData.category?._id || '' });
             console.log("data loading lkajflkdjas+++++++", bookData.grade?._id, bookData.category?._id)
         }
     }, [bookData]);
 
-    const handleInputChange = (e:any) => {
+    const handleInputChange = (e: any) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         setErrors({ ...errors, [name]: '' });
     };
 
-    const handleImageChange = (e:any)=> {
+    const handleImageChange = (e: any) => {
         const file = e.target.files[0];
         if (file) {
             const imageUrl = URL.createObjectURL(file);
@@ -81,7 +81,7 @@ function BookForm({ bookId }:{bookId?:string}) {
     const handleRemoveImage = () => {
         setFormData({ ...formData, image: null, imageUrl: '' });
     };
-    
+
 
     const validateForm = () => {
         const newErrors = {};
@@ -143,11 +143,11 @@ function BookForm({ bookId }:{bookId?:string}) {
                 console.log("Response status", response.success, response.success === true, response.success == true);
                 if (response.success === true) {
                     console.log("Book successfully Updated");
-                    notify("Book successfully Updated","success");
+                    notify("Book successfully Updated", "success");
                 }
                 else {
                     console.error("Error Updating book", response.status, "Data:", response.data);
-                    notify("Error Updating book","error");
+                    notify("Error Updating book", "error");
                 }
             }
             catch (error) {
@@ -249,24 +249,17 @@ function BookForm({ bookId }:{bookId?:string}) {
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                 Subject
                             </label>
-                            <div className="flex items-center gap-2">
-                                <select
-                                    name="categoryId"
-                                    value={formData.categoryId}
-                                    onChange={handleInputChange}
-                                    className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                >
-                                    <option value="">Select Subject</option>
-                                    {subjectData?.data?.map((subject:any, key:string) =>
-                                        <option value={subject._id} key={key}>{subject.name}</option>
-                                    )}
-                                </select>
-                                <Tooltip content="Add New Category" className="">
-                                    <button type="button" className="h-12 bg-red p-1 px-2 text-white rounded-md" onClick={() => toggleShowModal()}>
-                                        <FaPlus className="text-lg" />
-                                    </button>
-                                </Tooltip>
-                            </div>
+                            <select
+                                name="categoryId"
+                                value={formData.categoryId}
+                                onChange={handleInputChange}
+                                className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                            >
+                                <option value="">Select Subject</option>
+                                {subjectData?.data?.map((subject: any, key: string) =>
+                                    <option value={subject._id} key={key}>{subject.name}</option>
+                                )}
+                            </select>
 
                             {errors.categoryId && <p className="text-red text-xs mt-1">{errors.categoryId}</p>}
                         </div>
@@ -309,7 +302,7 @@ function BookForm({ bookId }:{bookId?:string}) {
                                     className="w-4/5 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                 >
                                     <option value="">Select Grade</option>
-                                    {gradeData?.data?.map((grade:any, key:string) =>
+                                    {gradeData?.data?.map((grade: any, key: string) =>
                                         <option value={grade._id}>{grade.name}</option>
                                     )}
                                 </select>

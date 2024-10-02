@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { getOneBook } from '@/serivces/bookService';
 import { useRouter } from 'next/navigation'
 import { addContact } from "@/serivces/contactService";
+import notify from "@/utils/notify";
 
 function ContactForm({ bookId }) {
     const router = useRouter();
@@ -18,10 +19,10 @@ function ContactForm({ bookId }) {
     const [formData, setFormData] = useState({
         title: '',
         location: '',
-        contactNo: '',
-        email: '',
+        email: [''],
         officeCategory: '',
         managerName: '',
+        contactNo: [''],
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -38,6 +39,32 @@ function ContactForm({ bookId }) {
         setFormData({ ...formData, [name]: value });
         setErrors({ ...errors, [name]: '' });
     };
+
+    const handleContactChange = (e, index) => {
+        const newContacts = [...formData.contactNo];
+        newContacts[index] = e.target.value;
+        setFormData({ ...formData, contactNo: newContacts });
+    };
+
+    const addContactField = () => {
+        setFormData({ ...formData, contactNo: [...formData.contactNo, ''] });
+    };
+
+    const handleAddEmail = () => {
+        setFormData((prevData) => ({ ...prevData, email: [...prevData.email, ''] }));
+    };
+
+    const handleEmailChange = (index, value) => {
+        const updatedEmails = [...formData.email];
+        updatedEmails[index] = value;
+        setFormData((prevData) => ({ ...prevData, email: updatedEmails }));
+    };
+
+    const handleRemoveEmail = (index) => {
+        const updatedEmails = formData.email.filter((_, i) => i !== index);
+        setFormData((prevData) => ({ ...prevData, email: updatedEmails }));
+    };
+
 
     const validateForm = () => {
         const newErrors = {};
@@ -63,12 +90,14 @@ function ContactForm({ bookId }) {
 
                 if (response.success === true) {
                     console.log("Contact successfully added", response.data);
+                    notify("Contact successfully added", "success");
                     router.push(`/contacts/`);
                 } else {
+                    notify("Contact successfully added", "success");
                     console.error("Error adding contact", response, "Data:", response.data);
                 }
             } catch (error) {
-                console.error("Caught Error", error.response.status, error.response.data.error);
+                console.error("Caught Error", error.response.status, error?.response?.data?.error?.message);
                 return;
             } finally {
                 setIsLoading(false);
@@ -161,32 +190,35 @@ function ContactForm({ bookId }) {
                         </div>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                Contact Number
+                                Contact Numbers
                             </label>
-                            <input
-                                type="text"
-                                name="contactNo"
-                                placeholder="Contact Number"
-                                value={formData.contactNo}
-                                onChange={handleInputChange}
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                            />
+                            {formData.contactNo.map((contact, index) => (
+                                <input
+                                    key={index}
+                                    type="text"
+                                    name={`contactNo-${index}`}
+                                    placeholder={`Contact Number ${index + 1}`}
+                                    value={contact}
+                                    onChange={(e) => handleContactChange(e, index)}
+                                    className="w-full my-2 rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                />
+                            ))}
                             {errors.contactNo && <p className="text-red text-xs mt-1">{errors.contactNo}</p>}
+                            <button type="button" onClick={addContactField}>Add More</button>
                         </div>
-                        <div>
-                            <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                            />
-                            {errors.email && <p className="text-red text-xs mt-1">{errors.email}</p>}
-                        </div>
+                        {formData.email.map((mail, index) => (
+                            <div key={index} className="flex items-center">
+                                <input
+                                    type="email"
+                                    value={mail}
+                                    onChange={(e) => handleEmailChange(index, e.target.value)}
+                                    placeholder="Email"
+                                    className="border p-2 mr-2"
+                                />
+                                <button type="button" onClick={() => handleRemoveEmail(index)}>Remove</button>
+                            </div>
+                        ))}
+                        <button type="button" onClick={handleAddEmail}>Add Email</button>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                 Office Category

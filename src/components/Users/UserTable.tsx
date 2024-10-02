@@ -4,14 +4,44 @@ import moment from 'moment';
 import { Package } from "@/types/package";
 import { User } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
-import { getAllUsers } from "@/serivces/userService";
+import { deleteUser, getAllUsers } from "@/serivces/userService";
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import notify from '@/utils/notify';
 
 const UserTable = () => {
-    const { data: userData, isLoading, error, isError } = useQuery({
+    const { data: userData, isLoading, error, isError, refetch:refetchUsers } = useQuery({
         queryKey: ['users'],
         queryFn: getAllUsers,
     })
+
+    const router = useRouter();
+    const [isDeletionLoading, setIsDeletionLoading] = useState(false);
+
+    const handleDelete = async (userId:string) => {
+        setIsDeletionLoading(true);
+        try {
+            console.log("dlakjfkl", userId);
+            const response = await deleteUser(userId);
+
+            if (response.success === true) {
+                console.log("User successfully deleted", response.data);
+                notify("User successfully deleted!", "success");
+                refetchUsers();
+            }
+            else {
+                console.error("Error deleting User", response, "Data:", response.data);
+            }
+        }
+        catch (error) {
+            console.error("Caught Error", error.response.status, error.response.data.error);
+            return;
+        }
+        finally {
+            setIsDeletionLoading(false);
+        }
+    }
 
     return (
 
@@ -39,7 +69,7 @@ const UserTable = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {userData?.data.map((user: User, key:number) => (
+                            {userData?.data.map((user: User, key: number) => (
                                 <tr key={key}>
                                     <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                                         <Link href={`/users/${user._id}`} className="font-medium text-black dark:text-white">
@@ -73,7 +103,7 @@ const UserTable = () => {
                                     </td>
                                     <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                                         <div className="flex items-center space-x-3.5">
-                                            <button className="hover:text-primary">
+                                            <Link href={`/users/${user._id}`} className="hover:text-primary">
                                                 <svg
                                                     className="fill-current"
                                                     width="18"
@@ -91,8 +121,8 @@ const UserTable = () => {
                                                         fill=""
                                                     />
                                                 </svg>
-                                            </button>
-                                            <button className="hover:text-primary">
+                                            </Link>
+                                            <button type="button" className="hover:text-primary" onClick={()=>handleDelete(user._id)}>
                                                 <svg
                                                     className="fill-current"
                                                     width="18"

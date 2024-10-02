@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { FaBook, FaCalendarDay } from "react-icons/fa";
 import { IoDocumentsSharp } from "react-icons/io5";
-import { MdContacts, MdOutlineAbc } from "react-icons/md";
+import { MdContacts, MdOutlineAbc, MdOutlineForum } from "react-icons/md";
 import { TfiLayoutSlider } from "react-icons/tfi";
 import { FaCircleInfo } from "react-icons/fa6";
 import { SiGoogleforms } from "react-icons/si";
@@ -105,6 +105,14 @@ const menuGroups = [
         label: "Events",
         route: "/events",
         users: ['Admin']
+      },
+      {
+        icon: (
+          <MdOutlineForum />
+        ),
+        label: "Forum",
+        route: "/forum",
+        users: ['Admin','Author', 'Teacher']
       },
       {
         icon: (

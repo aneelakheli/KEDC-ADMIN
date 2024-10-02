@@ -19,11 +19,11 @@ const ContactsTable = () => {
     console.log(isLoading, error, isError, isLoading, userData?.data);
 
     const DeleteContactComponent = ({ contactId }: { contactId: String }) => {
-
         const router = useRouter();
         const [isDeletionLoading, setIsDeletionLoading] = useState(false);
-
+        
         const handleDelete = async () => {
+            console.log("ID----------------", contactId);
             setIsDeletionLoading(true);
             try {
                 console.log("dlakjfkl", contactId);
@@ -113,8 +113,10 @@ const ContactsTable = () => {
                                     {contact.email}
                                 </p>
                             </div>
-                            <div className="col-span-1 flex items-center">
-                                <p className="text-sm text-black dark:text-white">{contact.contactNo}</p>
+                            <div className="col-span-1 flex gap-2 flex-wrap items-center">
+                                {contact?.contactNo?.map((number) => (
+                                    <div className="text-sm text-black dark:text-white">{number}</div>
+                                ))}
                             </div>
                             <div className="col-span-1 flex items-center break-words">
                                 <p className="text-sm text-black dark:text-white break-words">{contact.location}</p>
@@ -127,7 +129,6 @@ const ContactsTable = () => {
                             </div>
                             <div className="col-span-1 flex items-center">
                                 <span className="text-sm text-black dark:text-white"><DeleteContactComponent contactId={contact._id} /></span>
-                                <span className="text-sm text-black dark:text-white"><Link href={`/contacts/edit/${contact._id}`}><MdEdit className='text-xl' /></Link></span>
                             </div>
 
                         </div>
