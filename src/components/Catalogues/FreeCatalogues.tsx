@@ -55,7 +55,7 @@ const FreeCatalogues = () => {
                                 <h4 className="mb-1 text-xl font-semibold text-white hover:text-primary dark:text-white dark:hover:text-primary">
                                     <Link href={`/catalogues/${catalogue._id}`}>{catalogue.title}</Link>
                                 </h4>
-                                <p className="text-gray">{catalogue.category.name}</p>
+                                <p className="text-gray">{catalogue?.category?.name}</p>
                             </div>
                             {/* <div className="text-green-500 w-1/5 flex justify-center items-center">
                                 <MdOutlineWorkspacePremium className="text-3xl" />

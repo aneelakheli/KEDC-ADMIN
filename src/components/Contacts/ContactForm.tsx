@@ -213,7 +213,7 @@ function ContactForm({ bookId }) {
                                     value={mail}
                                     onChange={(e) => handleEmailChange(index, e.target.value)}
                                     placeholder="Email"
-                                    className="border p-2 mr-2"
+                                    className="border-stroke p-2 mr-2"
                                 />
                                 <button type="button" onClick={() => handleRemoveEmail(index)}>Remove</button>
                             </div>
