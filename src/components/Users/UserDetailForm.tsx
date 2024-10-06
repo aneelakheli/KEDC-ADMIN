@@ -131,7 +131,7 @@ function UserDetailForm({ id }: { id: string }) {
                 if (response.success === true) {
                     console.log("User successfully deleted", response.data);
                     notify("User successfully deleted!", "success");
-                    router.push(`/dashboard/users/`);
+                    router.push(`/users/`);
                 }
                 else {
                     console.error("Error deleting User", response, "Data:", response.data);
