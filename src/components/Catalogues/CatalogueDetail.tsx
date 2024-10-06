@@ -131,17 +131,13 @@ function CatalogueDetail({ id }: { id: String }) {
                     <span className="ml-2 text-gray-900 dark:text-white">{catalogueData.title}</span>
                   </div>
                   <div className="mb-4">
-                    <span className="font-semibold text-gray-700 dark:text-gray-300">Id:</span>
-                    <span className="ml-2 text-gray-900 dark:text-white">{catalogueData._id}</span>
-                  </div>
-                  <div className="mb-4">
                     <span className="font-semibold text-gray-700 dark:text-gray-300">Subject:</span>
                     <span className="ml-2 text-gray-900 dark:text-white">{catalogueData.category?.name || catalogueData.category}</span>
                   </div>
                 </div>
               </div>
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white my-6">Book Description</h2>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white my-6">Catalogue Description</h2>
                 <div className="ml-2 text-gray-900 dark:text-white">
                   {catalogueData.description} Some random description here
                 </div>

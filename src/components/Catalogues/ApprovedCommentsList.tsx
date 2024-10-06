@@ -54,7 +54,7 @@ function ApprovedCommentsList({ catalogueId }: { catalogueId: String }) {
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{comment.title}</h3>
                             <p className="text-gray-600 dark:text-gray-300">{comment.description}</p>
                             <div className="text-sm text-gray-500 dark:text-gray-400">
-                                <p>Commented by: {comment.commentBy}</p>
+                                <p>Commented by: {comment.commentBy.fullName}</p>
                                 <p>{moment(comment.createdAt).fromNow()}</p>
                             </div>
                         </div>

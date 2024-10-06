@@ -188,7 +188,7 @@ function UserDetailForm({ id }: { id: string }) {
                 if (response.success === true) {
                     console.log("User successfully approved", response.data);
                     notify("User successfully approved!", "success");
-                    router.push(`/dashboard/users/`);
+                    router.push(`/users/`);
                 }
                 else {
                     console.error("Error approving User", response, "Data:", response.data);
