@@ -247,7 +247,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {group.menuItems.map((menuItem, menuIndex) => {
-                    if (menuItem?.users.includes(user.role)) {
+                    if (menuItem?.users.includes(user?.role)) {
                       return (<>
                         <SidebarItem
                           key={menuIndex}

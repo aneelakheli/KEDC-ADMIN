@@ -50,11 +50,11 @@ function ApprovedCommentsList({ catalogueId }: { catalogueId: String }) {
                 (commentData?.data?.map((comment: Comment) => (
                     <div key={comment._id} className="mb-4 p-4 bg-gray-100 rounded-md dark:bg-gray-700 flex justify-between items-center">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{comment.commentBy}</h3>
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{comment.commentBy.fullName}</h3>
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{comment.title}</h3>
                             <p className="text-gray-600 dark:text-gray-300">{comment.description}</p>
                             <div className="text-sm text-gray-500 dark:text-gray-400">
-                                <p>Commented by: {comment.commentBy.fullName}</p>
+                                {/* <p>Commented by: {comment.commentBy.fullName}</p> */}
                                 <p>{moment(comment.createdAt).fromNow()}</p>
                             </div>
                         </div>
