@@ -29,6 +29,9 @@ export const AuthProvider = ({ children }) => {
             const decoded = jwtDecode(token);
             setUser({ id: decoded.id, email: decoded.email, role: decoded.role });
         }
+        if(!token){
+            logout();
+        }
     }, []);
 
     const login = async (email, password) => {

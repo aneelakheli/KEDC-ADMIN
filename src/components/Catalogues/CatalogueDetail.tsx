@@ -143,7 +143,7 @@ function CatalogueDetail({ id }: { id: String }) {
                 </div>
               </div>
               {
-                ['Admin'].includes(user.role) && (
+                ['Admin'].includes(user?.role) && (
                   <div className="flex space-x-4 mt-8">
                     <Link href={`/catalogues/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
                       Edit
@@ -162,7 +162,7 @@ function CatalogueDetail({ id }: { id: String }) {
         )}
 
       </div>
-      {['Admin', 'Author'].includes(user.role) &&
+      {['Admin', 'Author'].includes(user?.role) &&
         (
           <NewCommentsList catalogueId={id} />
         )}
