@@ -13,7 +13,7 @@ function Catalogue({params}) {
 
     return (
         <DefaultLayout>
-            <div className="mx-auto max-w-242.5">
+            <div className="mx-auto">
                 <Breadcrumb breadcrumbs={breadcrumbs} />
                 {/* <BookDetail id={params.id}/> */}
                 <CatalogueDetail id={params.id}/>
