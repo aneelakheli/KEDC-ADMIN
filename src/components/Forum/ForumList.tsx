@@ -5,18 +5,18 @@ import moment from 'moment';
 import Link from "next/link";
 import { Package } from "@/types/package";
 import { User } from "@/types/user";
-import { Book } from "@/types/book";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBooks } from '@/serivces/bookService';
 import { FaPlus } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
+import { getAllPublishedForums, getAllUnpublishedForums } from "@/serivces/forumService";
+import { Forum } from "@/types/forum";
 
 const ForumList = () => {
     const { user } = useAuth();
 
     const { data: forumData, isLoading, error, isError } = useQuery({
-        queryKey: ['books'],
-        queryFn: getAllBooks,
+        queryKey: ['unpublished_forums'],
+        queryFn: getAllUnpublishedForums,
     })
 
     console.log(isLoading, error, isError, isLoading, forumData?.data);
@@ -27,7 +27,8 @@ const ForumList = () => {
             <div className="max-w-full overflow-x-auto">
 
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    {forumData?.data?.map((book: Book, key: number) => (
+                    {console.log("Some Value =============",forumData)}
+                    {forumData?.map((forum: Forum, key: number) => (
                         <div
                             className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
                             key={key}
@@ -35,36 +36,40 @@ const ForumList = () => {
                             <div className="col-span-3 flex items-center">
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                                     <div className="relative h-22 w-18 rounded-md">
+                                        {(forum.image && forum?.image?.length > 0)?
+                                    
+                                             <Image
+                                                src={forum?.image?.[0] || "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.sWCvltMZF_s3mjA5sL-RdgHaE8%26pid%3DApi&f=1&ipt=e28cd914b5e66fe7d48ce2ea62ce3e9a598fd9f8e2b9458cabfd9cad6fcc8679&ipo=images"}
+                                                layout="fill"
+                                                objectFit="cover"
+                                                alt="userData"
+                                            />
+                                        :
                                         <Image
-                                            src={book.image}
-                                            layout="fill"
-                                            objectFit="cover"
-                                            alt="userData"
-                                        />
+                                                src={'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.sWCvltMZF_s3mjA5sL-RdgHaE8%26pid%3DApi&f=1&ipt=e28cd914b5e66fe7d48ce2ea62ce3e9a598fd9f8e2b9458cabfd9cad6fcc8679&ipo=images'}
+                                                layout="fill"
+                                                objectFit="cover"
+                                                alt="userData"
+                                            />
+                                    }
                                     </div>
-                                    <Link href={`/books/${book._id}`}>
+                                    <Link href={`/forum/chat/${forum._id}`}>
                                         <p className="text-sm font-semibold text-black dark:text-white">
-                                            {book.name}
+                                            {forum.title}
                                         </p>
                                     </Link>
                                 </div>
                             </div>
                             <div className="col-span-2 hidden items-center sm:flex">
                                 <p className="text-sm text-black dark:text-white">
-                                    {/* {console.log("Category", book?.category)} */}
-                                    {book.category?.name || '-'}
+                                    {/* {console.log("Category", forum?.category)} */}
+                                    {forum.subject?.name ?? forum.subject ?? ''}
                                 </p>
                             </div>
                             <div className="col-span-1 flex items-center">
                                 <p className="text-sm text-black dark:text-white">
-                                    {book.author}
+                                    {forum?.user?.fullName || forum?.user?.email }
                                 </p>
-                            </div>
-                            <div className="col-span-1 flex items-center">
-                                <p className="text-sm text-black dark:text-white">{book.grade?.name || '-'}</p>
-                            </div>
-                            <div className="col-span-1 flex items-center">
-                                <p className="text-sm text-black dark:text-white">{book.publication}</p>
                             </div>
                         </div>
                     ))}

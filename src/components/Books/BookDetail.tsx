@@ -105,12 +105,14 @@ function BookDetail({ id }) {
       {isSuccess && bookData &&
         (
           <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col items-center">
+            <div className="grid grid-rows-2 md:grid-rows-1 grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="relative">
                 <Image
                   src={bookData.image}
+                  fill={true}
                   alt="Book Image"
-                  className="rounded-lg shadow-lg cursor-pointer"
+                  className="rounded-lg cursor-pointer"
+                  objectFit="contain"
                 />
               </div>
               <div className="flex flex-col">

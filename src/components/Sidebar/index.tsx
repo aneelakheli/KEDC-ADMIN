@@ -106,14 +106,14 @@ const menuGroups = [
         route: "/events",
         users: ['Admin']
       },
-      // {
-      //   icon: (
-      //     <MdOutlineForum />
-      //   ),
-      //   label: "Forum",
-      //   route: "/forum",
-      //   users: ['Admin','Author', 'Teacher']
-      // },
+      {
+        icon: (
+          <MdOutlineForum />
+        ),
+        label: "Forum",
+        route: "/forum",
+        users: ['Admin','Author', 'Teacher']
+      },
       {
         icon: (
           <TbNumbers />

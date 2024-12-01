@@ -34,15 +34,14 @@ export const getOneForum = async (id: string) => {
 // Add a new forum post
 export const addForum = async (forumData: Forum) => {
     try {
-        const formData = new FormData();
-        formData.append('title', forumData.title);
-        formData.append('description', forumData.description);
-        formData.append('subject', forumData.subject);
-        if (forumData.image) {
-            forumData.image.forEach((file: File | string) => formData.append('image', file));
-        }
-        console.log(formData);
-        const response = await post('/forum/', formData, true);  // true for multipart/form-data
+        // const formData = new FormData();
+        // formData.append('title', forumData.title);
+        // formData.append('description', forumData.description);
+        // formData.append('subject', forumData.subject);
+        // if (forumData.image) {
+        //     forumData.image?.forEach((file: File | string) => formData.append('image', file));
+        // }
+        const response = await post('/forum/', forumData, true);  // true for multipart/form-data
         return response.data;
     } catch (error) {
         throw error;
@@ -80,13 +79,13 @@ export const deleteForum = async (id: string) => {
 // Add a reply to a forum post
 export const addForumReply = async (forumId: string, replyData: ForumReply) => {
     try {
-        const formData = new FormData();
-        formData.append('description', replyData.description);
-        if (replyData.image) {
-            replyData.image.forEach((file: File) => formData.append('image', file));
-        }
+        // const formData = new FormData();
+        // formData.append('description', replyData.description);
+        // if (replyData.image) {
+        //     replyData.image.forEach((file: File) => formData.append('image', file));
+        // }
 
-        const response = await post(`/forum/${forumId}/replies`, formData, true);  // true for multipart/form-data
+        const response = await post(`/forum/${forumId}/replies`, replyData, true);  // true for multipart/form-data
         return response.data;
     } catch (error) {
         throw error;

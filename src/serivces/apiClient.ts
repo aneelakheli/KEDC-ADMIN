@@ -50,25 +50,50 @@ export const get = async (url: string, params?: Record<string, any>) => {
 };
 
 export const post = async (url: string, data: Record<string, any>, isMultipart = false) => {
-  let config = {};
+  let config: { headers?: Record<string, string> } = {};
+
   if (isMultipart) {
     const formData = new FormData();
+
     for (const key in data) {
-      formData.append(key, data[key]);
+      // if (key === 'image' && Array.isArray(data[key])) {
+      //   // If data[key] is an array, iterate through each image file
+      //   data[key].forEach((imageFile: File | Blob, index: number) => {
+      //     formData.append(`image${index}`, imageFile);
+      //   });
+      // } else {
+        // Handle non-image fields
+        formData.append(key, data[key]);
+      // }
     }
+
     data = formData;
     config.headers = { 'Content-Type': 'multipart/form-data' };
   }
-  const response = await apiClient.post(url, data, config);
-  return response.data;
+
+  try {
+    const response = await apiClient.post(url, data, config);
+    return response.data;
+  } catch (error) {
+    console.error("Error during POST request:", error);
+    throw error; // Re-throw the error to handle it upstream.
+  }
 };
+
 
 export const put = async (url: string, data: Record<string, any>, isMultipart = false) => {
   let config = {};
   if (isMultipart) {
     const formData = new FormData();
     for (const key in data) {
-      formData.append(key, data[key]);
+      if (key === 'image') {
+        for (const [imageKey, imageFile] of Object.entries(data[key])) {
+          formData.append(`image${imageKey}`, imageFile);
+        }
+      }
+      else {
+        formData.append(key, data[key]);
+      }
     }
     data = formData;
     config.headers = { 'Content-Type': 'multipart/form-data' };
@@ -82,7 +107,14 @@ export const patch = async (url: string, data: Record<string, any>, isMultipart 
   if (isMultipart) {
     const formData = new FormData();
     for (const key in data) {
-      formData.append(key, data[key]);
+      if (key === 'image') {
+        for (const [imageKey, imageFile] of Object.entries(data[key])) {
+          formData.append(`image${imageKey}`, imageFile);
+        }
+      }
+      else {
+        formData.append(key, data[key]);
+      }
     }
     data = formData;
     config.headers = { 'Content-Type': 'multipart/form-data' };
