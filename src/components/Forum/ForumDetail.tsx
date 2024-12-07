@@ -44,13 +44,13 @@ function ForumDetail({ id }) {
     const handleDelete = async () => {
       setIsDeletionLoading(true);
       try {
-        console.log("dlakjfkl", bookId);
+        // console.log("dlakjfkl", bookId);
         const response = await deleteBook(bookId);
 
         if (response.success === true) {
           console.log("Book successfully deleted", response.data);
           notify("Book successfully deleted!", "success");
-          refetchBooks();
+          // refetchBooks();
           router.push(`/books/`);
         }
         else {
@@ -113,19 +113,27 @@ function ForumDetail({ id }) {
                 <div className="mb-4">
                   <span className="ml-2 text-2xl font-bold text-gray-900 dark:text-white">{forumData.title}</span>
                 </div>
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Category:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{forumData.description}</span>
-                </div>
-                <div className="relative w-full h-96">
-                  <Image
-                    src={forumData.image?.[0] || "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.sWCvltMZF_s3mjA5sL-RdgHaE8%26pid%3DApi&f=1&ipt=e28cd914b5e66fe7d48ce2ea62ce3e9a598fd9f8e2b9458cabfd9cad6fcc8679&ipo=images"}
-                    fill={true}
-                    alt="Book Image"
-                    className="rounded-lg cursor-pointer"
-                    objectFit="contain"
-                  />
-                </div>
+                {
+                  forumData.subject?.name && (
+                    <div className="mb-4">
+                      <span className="ml-2 text-red dark:text-white p-2 rounded-sm text-sm bg-red-50 ">{forumData.subject?.name}</span>
+                    </div>
+                  )
+                }
+                {
+                  forumData.image?.[0] && (
+                    <div className="relative w-full h-96">
+                      <Image
+                        src={forumData.image?.[0]}
+                        fill={true}
+                        alt="Book Image"
+                        className="rounded-lg cursor-pointer"
+                        objectFit="contain"
+                      />
+                    </div>
+                  )
+                }
+
 
               </div>
               <div>

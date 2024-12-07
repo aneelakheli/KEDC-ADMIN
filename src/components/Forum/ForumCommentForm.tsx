@@ -213,26 +213,20 @@ function ForumForm({ forumId }: { forumId: string }) {
                     <div className='flex flex-col justify-center items-center'>
                         <div className="w-full relative grid grid-cols-1 min-h-96 border border-gray-300 bg-gray-100 rounded-lg select-none p-4">
                             <div className="relative min-h-32 h-auto border border-black border-dashed w-full rounded-md grid grid-cols-1 md:grid-cols-2 p-4 gap-4">
-                                {
+                                {/* {
                                     formData?.images?.length > 0 && formData?.images?.map((image) => (
                                         <div className="flex justify-center items-center">
                                             <div className="relative w-40 h-32 sm:w-48 sm:h-36 md:w-60 md:h-48 p-4 z-10 text-danger bg-danger" >
-                                                I am image
-                                                {console.log("Logging Image", formData?.imageUrl)}
-
                                                 <div className="p-1 border-white border justify-center items-center bg-[rgba(255,255,255,0.5)] absolute z-50 left-1 top-1">x</div>
                                                 <Image src={image} fill={true} alt="forum image" /></div>
                                         </div>
                                     ))
-                                }
+                                } */}
 
                                 {
                                     formData?.imageUrl?.length > 0 && formData?.imageUrl?.map((image) => (
                                         <div className="flex justify-center items-center">
                                             <div className="relative w-40 h-32 sm:w-48 sm:h-36 md:w-60 md:h-48 p-4 z-10 text-danger bg-danger">
-                                                I am image url
-                                                {console.log("Logging Image URL", formData?.imageUrl)}
-
                                                 <div className="p-1 border-white border justify-center items-center bg-[rgba(255,255,255,0.5)] absolute z-50 left-1 top-1" onClick={() => handleRemoveImageUrl(image)}>x</div>
                                                 <Image src={image} fill={true} alt="forum image" /></div>
                                         </div>
