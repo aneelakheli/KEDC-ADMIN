@@ -31,7 +31,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
         description: '',
         image: [],
         imageUrl: [],
-        alt: '',
+        // alt: '',
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -281,7 +281,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
                             </div>
                             {errors.image && <p className="text-red text-xs mt-1">{errors.image}</p>}
                         </div>
-                        <div>
+                        {/* <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                 Image Alternative Text
                             </label>
@@ -294,7 +294,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             />
                             {errors.alt && <p className="text-red text-xs mt-1">{errors.alt}</p>}
-                        </div>
+                        </div> */}
                         <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90" type='submit'>
                             {forumId ? 'Update' : 'Create'}
                         </button>

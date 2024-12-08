@@ -23,13 +23,15 @@ function ForumForm({ forumId }: { forumId: string }) {
 
     const [changed, setChanged] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const initialState = {
         title: '',
         description: '',
         image: [],
         imageUrl: [],
         alt: '',
-    });
+    }
+
+    const [formData, setFormData] = useState(initialState);
     const [isLoading, setIsLoading] = useState(false);
 
     const [errors, setErrors] = useState({});
@@ -76,7 +78,6 @@ function ForumForm({ forumId }: { forumId: string }) {
     };
 
     const handleRemoveImageUrl = (urlToRemove: string) => {
-        console.log(formData, "Removing URL=========", urlToRemove);
         setFormData({ ...formData, imageUrl: formData.imageUrl.filter(url => url !== urlToRemove), image: formData.image.filter((img, index) => img) });
         setChanged(true);
     };
@@ -105,10 +106,10 @@ function ForumForm({ forumId }: { forumId: string }) {
         else {
             try {
                 console.log("Forum Data", formData);
-                const response = await addForumReply(forumId,formData);
+                const response = await addForumReply(forumId, formData);
                 if (response.success === true) {
                     notify("Forum Uploaded Successfully", "success")
-                    router.push(`/forum/${response.data._id}`);
+                    setFormData(initialState);
                 }
                 else {
                     console.error("Error posting reply", response, "Data:", response.data);
@@ -192,7 +193,7 @@ function ForumForm({ forumId }: { forumId: string }) {
                             type="text"
                             name="title"
                             placeholder="Reply Title"
-                            value={formData.name}
+                            value={formData.title}
                             onChange={handleInputChange}
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
@@ -211,7 +212,7 @@ function ForumForm({ forumId }: { forumId: string }) {
                         {errors.description && <p className="text-red-500 text-xs mt-2">{errors.description}</p>}
                     </div>
                     <div className='flex flex-col justify-center items-center'>
-                        <div className="w-full relative grid grid-cols-1 min-h-96 border border-gray-300 bg-gray-100 rounded-lg select-none p-4">
+                        <div className="w-full relative grid grid-cols-1 border border-gray-300 bg-gray-100 rounded-lg select-none p-4">
                             <div className="relative min-h-32 h-auto border border-black border-dashed w-full rounded-md grid grid-cols-1 md:grid-cols-2 p-4 gap-4">
                                 {/* {
                                     formData?.images?.length > 0 && formData?.images?.map((image) => (
@@ -234,7 +235,7 @@ function ForumForm({ forumId }: { forumId: string }) {
                                 }
 
                             </div>
-                            <div className="rounded-l-lg p-2 bg-gray-200 flex flex-col justify-center items-center border-gray-300">
+                            <div className="rounded-l-lg bg-gray-200 flex flex-col sm:flex-row gap-2 justify-center items-center border-gray-300">
                                 <label className="cursor-pointer hover:opacity-80 inline-flex items-center text-center justify-center shadow-md my-2 px-2 py-2 bg-gray-900 text-gray-50 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                                     Select images
                                     <input id="restaurantImage" name="image" className="text-sm cursor-pointer w-36 hidden" type="file" onChange={handleImageChange} accept="image/*" />
@@ -250,7 +251,7 @@ function ForumForm({ forumId }: { forumId: string }) {
                         </div>
                         {errors.image && <p className="text-red text-xs mt-1">{errors.image}</p>}
                     </div>
-                    <div>
+                    {/* <div>
                         <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                             Image Alternative Text
                         </label>
@@ -263,7 +264,7 @@ function ForumForm({ forumId }: { forumId: string }) {
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                         {errors.alt && <p className="text-red text-xs mt-1">{errors.alt}</p>}
-                    </div>
+                    </div> */}
                     <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90" type='submit'>
                         {'Post Reply'}
                     </button>

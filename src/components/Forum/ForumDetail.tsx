@@ -3,13 +3,14 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
 import { deleteBook, getAllBooks, getOneBook } from '@/serivces/bookService';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import notify from "@/utils/notify";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import { getAllForumReplies, getOneForum } from "@/serivces/forumService";
 import ForumCommentForm from "./ForumCommentForm";
 import ForumForm from "./ForumForm";
+import { FaCheckCircle, FaTimesCircle, FaTrash } from "react-icons/fa";
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
   return (
@@ -24,6 +25,8 @@ function ErrorComponent({ errorMessage }: { errorMessage: string }) {
 
 function ForumDetail({ id }) {
   const { user } = useAuth();
+  const [showUnpublished, setShowUnpublished] = useState(false);
+  const [commentsData, setCommentsData] = useState(null);
 
   const { data: forumData, isSuccess, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['forumDetail', id],
@@ -31,10 +34,32 @@ function ForumDetail({ id }) {
   })
   console.log(isLoading, error, isError, isLoading, forumData?.data);
 
-  const { data: commentsData, isLoading: isCommentLoading, error: isCommentError, refetch: refetchComments } = useQuery({
-    queryKey: ['forumComments', id],
+  const { data: publishedCommentsData, isLoading: isPublishedCommentLoading, error: isPublishedCommentError, isSuccess: isPublishedSuccess, refetch: refetchPublishedComments } = useQuery({
+    queryKey: ['forumPublishedComments', id],
     queryFn: () => getAllForumReplies(id),
+    enabled: !showUnpublished
   })
+
+  const { data: unpublishedCommentsData, isLoading: isUnPublishedCommentLoading, error: isUnPublishedCommentError, isSuccess: isUnpublishedSuccess, refetch: refetchUnpublishedComments } = useQuery({
+    queryKey: ['forumUnpublishedComments', id],
+    queryFn: () => getAllForumReplies(id),
+    enabled: showUnpublished
+  })
+
+  useEffect(() => {
+    if (!isPublishedCommentLoading && !isUnPublishedCommentLoading) {
+
+      if (showUnpublished) {
+        setCommentsData(unpublishedCommentsData);
+        console.log("logging unpublished Comments================", unpublishedCommentsData);
+      }
+      else {
+        setCommentsData(publishedCommentsData);
+        console.log("logging published Comments ================", publishedCommentsData);
+      }
+    }
+  }, [showUnpublished, isUnpublishedSuccess, isPublishedSuccess])
+
 
   const DeleteBookComponent = ({ bookId }: { bookId: String }) => {
 
@@ -162,7 +187,43 @@ function ForumDetail({ id }) {
 
       </div>
       <div className="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800 mt-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Discussion</h2>
+        <h2 className="flex justify-between items-center text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Discussion
+
+
+          {/* To be shown only to admin and the related users */}
+          <div>
+            <div className="flex text-sm items-center justify-center py-4">
+              <div className="flex border border-lightred font-medium rounded-full overflow-hidden">
+                {/* Published Button */}
+                <button
+                  className={`px-4 py-2 ${!showUnpublished
+                    ? "bg-lightred text-gray-2"
+                    : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
+                    }`}
+                  onClick={() => setShowUnpublished(false)}
+                >
+                  Published
+                </button>
+
+                {/* Unpublished Button */}
+                <button
+                  className={`px-4 py-2 ${showUnpublished
+                    ? "bg-lightred text-gray-2"
+                    : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
+                    }`}
+                  onClick={() => setShowUnpublished(true)}
+                >
+                  Unpublished
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </h2>
+
+
+
         {commentsData && commentsData.length > 0 ? (
           <div className="space-y-4">
             {commentsData.map((comment, index) => (
@@ -171,23 +232,76 @@ function ForumDetail({ id }) {
                 className="p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
               >
                 {/* Comment Header */}
-                <div className="flex items-center mb-3 ">
-                  <div className="relative h-12 w-12">
-                    <Image
-                      src={comment.image?.[0] || "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.sWCvltMZF_s3mjA5sL-RdgHaE8%26pid%3DApi&f=1&ipt=e28cd914b5e66fe7d48ce2ea62ce3e9a598fd9f8e2b9458cabfd9cad6fcc8679&ipo=images"}
-                      alt="Commenter's avatar"
-                      fill={true}
-                      className="rounded-full object-cover"
-                    />
+                <div className="flex justify-between items-center mb-3 w-full">
+                  <div className="flex items-center">
+                    <div className="relative h-12 w-12">
+                      <Image
+                        src={comment.image?.[0] || "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.sWCvltMZF_s3mjA5sL-RdgHaE8%26pid%3DApi&f=1&ipt=e28cd914b5e66fe7d48ce2ea62ce3e9a598fd9f8e2b9458cabfd9cad6fcc8679&ipo=images"}
+                        alt="Commenter's avatar"
+                        fill={true}
+                        className="rounded-full object-cover"
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-sm font-semibold text-gray-800 dark:text-white">
+                        {comment.title || "Untitled Comment"}
+                      </h4>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className="ml-3">
-                    <h4 className="text-sm font-semibold text-gray-800 dark:text-white">
-                      {comment.title || "Untitled Comment"}
-                    </h4>
-                    <span className="text-xs text-gray-600 dark:text-gray-400">
-                      {new Date(comment.createdAt).toLocaleString()}
-                    </span>
+
+                  <div className="ml-4 text-2xl flex gap-4">
+                    {
+                      <button
+                        onClick={() => { }}
+                        className="text-2xl"
+                        disabled={false}
+                      >
+                        {false &&
+                          (
+                            <div
+                              className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                              role="status">
+                              <span
+                                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                              >Loading...
+                              </span>
+                            </div>
+                          )
+                        }
+                        {true ? (
+                          <FaTimesCircle className="text-red-500" />
+                        ) : (
+                          <FaCheckCircle className="text-green-500" />
+                        )}
+                      </button>
+                    }
+
+                    <button
+                      onClick={() => { }}
+                      className="text-2xl"
+                      disabled={false}
+                    >
+                      {false &&
+                        (
+                          <div
+                            className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                            role="status">
+                            <span
+                              className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                            >Loading...
+                            </span>
+                          </div>
+                        )
+                      }
+                      <FaTrash className="hover:text-lightred" />
+
+                    </button>
                   </div>
+
+
                 </div>
 
                 {/* Comment Content */}

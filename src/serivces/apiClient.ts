@@ -49,12 +49,12 @@ export const get = async (url: string, params?: Record<string, any>) => {
   return response.data;
 };
 
-export const post = async (url: string, data: Record<string, any>, isMultipart = false) => {
+export const post = async (url: string, data: Record<string, any>, isMultipart = false, isLazyMultipart = false) => {
   let config: { headers?: Record<string, string> } = {};
 
   if (isMultipart) {
     const formData = new FormData();
-
+console.log("Inside multipart");
     for (const key in data) {
       // if (key === 'image' && Array.isArray(data[key])) {
       //   // If data[key] is an array, iterate through each image file
@@ -71,6 +71,12 @@ export const post = async (url: string, data: Record<string, any>, isMultipart =
     config.headers = { 'Content-Type': 'multipart/form-data' };
   }
 
+  if(isLazyMultipart){
+console.log("Inside Lazy multipart");
+
+    config.headers = { 'Content-Type': 'multipart/form-data' };
+  }
+
   try {
     const response = await apiClient.post(url, data, config);
     return response.data;
@@ -81,7 +87,7 @@ export const post = async (url: string, data: Record<string, any>, isMultipart =
 };
 
 
-export const put = async (url: string, data: Record<string, any>, isMultipart = false) => {
+export const put = async (url: string, data: Record<string, any>, isMultipart = false, isLazyMultipart = false) => {
   let config = {};
   if (isMultipart) {
     const formData = new FormData();
@@ -98,11 +104,14 @@ export const put = async (url: string, data: Record<string, any>, isMultipart = 
     data = formData;
     config.headers = { 'Content-Type': 'multipart/form-data' };
   }
+  if(isLazyMultipart){
+    config.headers = { 'Content-Type': 'multipart/form-data' };
+  }
   const response = await apiClient.put(url, data, config);
   return response.data;
 };
 
-export const patch = async (url: string, data: Record<string, any>, isMultipart = false) => {
+export const patch = async (url: string, data: Record<string, any>, isMultipart = false, isLazyMultipart = false) => {
   let config = {};
   if (isMultipart) {
     const formData = new FormData();
@@ -117,6 +126,9 @@ export const patch = async (url: string, data: Record<string, any>, isMultipart 
       }
     }
     data = formData;
+    config.headers = { 'Content-Type': 'multipart/form-data' };
+  }
+  if(isLazyMultipart){
     config.headers = { 'Content-Type': 'multipart/form-data' };
   }
   const response = await apiClient.patch(url, data, config);

@@ -35,7 +35,7 @@ export default function Tooltip({ children, content,className="", position = 'ri
       onMouseLeave={() => MouseLeft()}
     >
       {isVisible && (
-        <div className={`absolute z-10 p-2 bg-gray text-black text-sm rounded shadow-lg${tooltipPosition}`}>
+        <div className={`absolute z-50 p-2 bg-gray text-black text-sm rounded shadow-lg${tooltipPosition}`}>
           {content}
         </div>
       )}
