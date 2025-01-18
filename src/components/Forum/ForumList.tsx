@@ -6,27 +6,27 @@ import moment from 'moment';
 import Link from "next/link";
 import { Package } from "@/types/package";
 import { User } from "@/types/user";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaCheckCircle, FaPlus, FaTimesCircle, FaTrash } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
-import { getAllPublishedForums, getAllUnpublishedForums } from "@/serivces/forumService";
-import { Forum } from "@/types/forum";
+import { approveForum, deleteForum, getAllPublishedForums, getAllUnpublishedForums } from "@/serivces/forumService";
+import { ResponseForum } from "@/types/forum";
 
 const ForumList = () => {
     const { user } = useAuth();
+    const queryClient = useQueryClient();
 
     const [showUnpublished, setShowUnpublished] = useState(false);
-    const [forumData, setForumData] = useState(null)
+    const [forumData, setForumData] = useState<ResponseForum | null>(null)
 
-
-    const { data: UnpublishedForumData, isLoading: isUnpublishedLoading, isSuccess: isUnpublishedSuccess, error: unpublishedError, isError: isUnpublishedError } = useQuery({
+    const { data: UnpublishedForumData, refetch: RefetchUnpublished, isLoading: isUnpublishedLoading, isSuccess: isUnpublishedSuccess, error: unpublishedError, isError: isUnpublishedError } = useQuery({
         queryKey: ['unpublished_forums'],
         queryFn: getAllUnpublishedForums,
         enabled: showUnpublished
     })
 
 
-    const { data: PublishedForumData, isLoading: isPublishedLoading, isSuccess: isPublishedSuccess, error: publishedError, isError: isPublishedError } = useQuery({
+    const { data: PublishedForumData, refetch: RefetchPublished, isLoading: isPublishedLoading, isSuccess: isPublishedSuccess, error: publishedError, isError: isPublishedError } = useQuery({
         queryKey: ['published_forums'],
         queryFn: getAllPublishedForums,
         enabled: !showUnpublished
@@ -34,16 +34,103 @@ const ForumList = () => {
 
     useEffect(() => {
         if (showUnpublished) {
-            console.log("logging unpublished ================", UnpublishedForumData);
             setForumData(UnpublishedForumData);
         }
         else {
-            console.log("logging published ================", PublishedForumData);
             setForumData(PublishedForumData);
         }
     }, [showUnpublished, isUnpublishedSuccess, isPublishedSuccess])
 
-    // console.log(isLoading, error, isError, isLoading, forumData?.data);
+    const handleRefetch = () => {
+        if (showUnpublished) {
+            RefetchUnpublished();
+        }
+        queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] })
+        queryClient.invalidateQueries({ queryKey: ['published_forums'] })
+    }
+
+    const DeleteForumComponent = ({ id: fid, onDelete }: { id: string, onDelete: Function }) => {
+        const deleteForumMn = useMutation({
+            mutationFn: (id: string) => deleteForum(id)
+        })
+
+        const handleDelete = (id: string) => {
+            // console.log()
+            if (!deleteForumMn.isLoading) {
+                deleteForumMn.mutate(id);
+                onDelete?.();
+            }
+        };
+
+        return (
+            <div
+                className="text-2xl"
+            >
+                {deleteForumMn.isLoading ?
+                    (
+                        <div
+                            className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                            role="status">
+                            <span
+                                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                            >Loading...
+                            </span>
+                        </div>
+                    ) :
+                    <FaTrash className="text-lightred" onClick={() => handleDelete(fid)}
+                    />
+                }
+
+            </div>
+        )
+    }
+
+    const ApproveForumComponent = ({ id: fid, onApprove }: { id: string, onApprove: Function }) => {
+
+        const toggleApprovalMn = useMutation({
+            mutationFn: (id: string) =>
+                approveForum(id),
+            mutationKey: ["toggleForumApproval", fid]
+        });
+
+        const handleApprove = (id: string) => {
+            // if (!toggleApprovalMn.isLoading) {
+            toggleApprovalMn.mutate(id);
+            onApprove();
+            // }
+        };
+
+        return (
+
+            <div
+                onClick={() => { }}
+                className="text-2xl"
+            >
+                {(toggleApprovalMn.isLoading) ?
+                    (
+                        <div
+                            className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                            role="status">
+                            <span
+                                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                            >Loading...
+                            </span>
+                        </div>
+                    ) :
+                    <FaCheckCircle className="text-green-500" onClick={() => handleApprove(fid)} />
+
+                }
+                {/* {false ? (
+                    <FaTimesCircle className="text-blue-500" />
+                ) : (
+                    <FaCheckCircle className="text-green-500" onClick={() => handleApprove(fid)} />
+                )} */}
+            </div>
+
+        )
+    }
+
+    console.log(forumData, "Forum Data--------")
 
     return (
 
@@ -77,8 +164,7 @@ const ForumList = () => {
                     </div>
                 </div>
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    {console.log("Some Value =============", forumData)}
-                    {forumData?.map((forum: Forum, key: number) => (
+                    {forumData && forumData.map((forum: ResponseForum, key: number) => (
                         <div
                             className="grid grid-cols-8 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
                             key={key}
@@ -122,64 +208,51 @@ const ForumList = () => {
                                 </p>
                             </div>
 
-
-                            <div className="col-span-1 ml-4 text-2xl flex gap-2 items-center">
-                                {
-                                    <button
-                                        onClick={() => { }}
-                                        className="text-2xl"
-                                        disabled={false}
-                                    >
-                                        {false &&
-                                            (
-                                                <div
-                                                    className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-                                                    role="status">
-                                                    <span
-                                                        className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-                                                    >Loading...
-                                                    </span>
-                                                </div>
-                                            )
-                                        }
-                                        {false ? (
-                                            <FaTimesCircle className="text-blue-500" />
-                                        ) : (
-                                            <FaCheckCircle className="text-green-500" />
-                                        )}
-                                    </button>
-                                }
-
-                                <button
-                                    onClick={() => { }}
-                                    className="text-2xl"
-                                    disabled={false}
-                                >
-                                    {false &&
-                                        (
-                                            <div
-                                                className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-                                                role="status">
-                                                <span
-                                                    className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-                                                >Loading...
-                                                </span>
-                                            </div>
-                                        )
+                            {
+                                ['Admin', 'Author'].includes(user?.role) &&
+                                <div className="col-span-1 ml-4 text-2xl flex gap-2 items-center">
+                                    {
+                                        !forum?.isPublished && <ApproveForumComponent id={forum?._id} onApprove={handleRefetch} />
                                     }
-                                    <FaTrash className="text-lightred" />
 
-                                </button>
-                                <div>
-                                    <div className="rounded-full p-2 text-sm bg-gray">30</div>
+                                    <DeleteForumComponent id={forum?._id} onDelete={handleRefetch} />
+
+                                    <div>
+                                        <div className="rounded-full p-2 text-sm bg-gray">30</div>
+                                    </div>
                                 </div>
-                            </div>
+                            }
+
 
                         </div>
                     ))}
+                    {
+                        // !!forumData && (
+                        //     <div className="flex justify-center items-center mt-4">
+                        //         <button
+                        //             className="px-4 py-2 mx-1 bg-gray-200 rounded"
+                        //         // disabled={currentPage === 1}
+                        //         // onClick={() => setCurrentPage((prev) => prev - 1)}
+                        //         >
+                        //             Previous
+                        //         </button>
+                        //         <span className="px-4 py-2">
+                        //             {/* {currentPage} */}
+                        //             3
+                        //         </span>
+                        //         <button
+                        //             className="px-4 py-2 mx-1 bg-gray-200 rounded"
+                        //         // disabled={currentPage === Math.ceil((forumData?.length || 0) / itemsPerPage)}
+                        //         // onClick={() => setCurrentPage((prev) => prev + 1)}
+                        //         >
+                        //             Next
+                        //         </button>
+                        //     </div>
+                        // )
+                    }
                 </div>
                 {
-                    ['Admin', 'Auther'].includes(user.role) && (
+                    ['Admin', 'Auther', 'Teacher'].includes(user.role) && (
                         <Link href="/forum/add" className="flex flex-col gap-2 justify-center items-center border border-stroke font-medium py-4 my-4">
                             <FaPlus className="text-xl" />
                             Start a Discussion

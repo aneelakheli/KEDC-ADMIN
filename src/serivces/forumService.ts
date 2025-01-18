@@ -14,7 +14,8 @@ export const getAllPublishedForums = async () => {
 // Get all unpublished forums
 export const getAllUnpublishedForums = async () => {
     try {
-        const response = await get('/forum/');
+        const response = await get('/forum/unpublished');
+        console.log("Logging response ++++++++", response);
         return response.data;
     } catch (error) {
         throw error;
@@ -66,10 +67,22 @@ export const updateForum = async (id: string, forumData: Forum) => {
     }
 };
 
+export const approveForum = async (id: string) => {
+    try {
+        // const formData = new FormData();
+        // formData.append('isPublished', JSON.stringify(1));
+        const payload = { isPublished: true}
+        const response = await patch(`/forum/${id}/published`, payload, false, false);  // true for multipart/form-data
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
 // Delete a forum post
 export const deleteForum = async (id: string) => {
     try {
-        const response = await del(`/forum/${id}`);
+        const response = await del(`/forum/${id}/`);
         return response.data;
     } catch (error) {
         throw error;

@@ -11,3 +11,16 @@ export type Forum = {
     alt?: string;
     user?: User | string;
 }
+
+
+export type ResponseForum = {
+    _id:string;
+    title: string;
+    description: string;
+    subject: Category;
+    image?: string[];
+    imageUrl: string[];
+    alt?: string;
+    user?: User | string;
+    isPublished:false;
+}

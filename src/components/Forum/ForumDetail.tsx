@@ -167,10 +167,10 @@ function ForumDetail({ id }) {
                 </div>
               </div>
               {['Admin', 'Author'].includes(user.role) && (
-                <div className="flex space-x-4 mt-8">
-                  <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                <div className="flex justify-end space-x-4 mt-8">
+                  {/* <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
                     Edit
-                  </Link>
+                  </Link> */}
                   {['Admin', 'Author'].includes(user.role) && (
                     <DeleteBookComponent bookId={id} />
                   )}

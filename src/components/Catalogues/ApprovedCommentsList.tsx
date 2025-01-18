@@ -31,6 +31,7 @@ function ApprovedCommentsList({ catalogueId }: { catalogueId: String }) {
             toggleApprovalMutation.mutate(comment);
         }
     };
+    
     console.log("Approved Comments",commentData)
 
     return (
