@@ -33,30 +33,34 @@ const ForumList = () => {
     })
 
     useEffect(() => {
-        if (showUnpublished) {
+        if (showUnpublished && UnpublishedForumData) {
             setForumData(UnpublishedForumData);
-        }
-        else {
+        } else if (!showUnpublished && PublishedForumData) {
             setForumData(PublishedForumData);
         }
-    }, [showUnpublished, isUnpublishedSuccess, isPublishedSuccess])
+    }, [showUnpublished, UnpublishedForumData, PublishedForumData]);
+
 
     const handleRefetch = () => {
-        if (showUnpublished) {
-            RefetchUnpublished();
-        }
+        // if (showUnpublished) {
+        //     RefetchUnpublished();
+        // }
         queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] })
         queryClient.invalidateQueries({ queryKey: ['published_forums'] })
     }
 
     const DeleteForumComponent = ({ id: fid, onDelete }: { id: string, onDelete: Function }) => {
         const deleteForumMn = useMutation({
-            mutationFn: (id: string) => deleteForum(id)
-        })
+            mutationFn: (id: string) => deleteForum(id),
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
+                queryClient.invalidateQueries({ queryKey: ['published_forums'] });
+            },
+        });
 
         const handleDelete = (id: string) => {
             // console.log()
-            if (!deleteForumMn.isLoading) {
+            if (!deleteForumMn.isPending) {
                 deleteForumMn.mutate(id);
                 onDelete?.();
             }
@@ -66,7 +70,7 @@ const ForumList = () => {
             <div
                 className="text-2xl"
             >
-                {deleteForumMn.isLoading ?
+                {deleteForumMn.isPending ?
                     (
                         <div
                             className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
@@ -87,11 +91,16 @@ const ForumList = () => {
 
     const ApproveForumComponent = ({ id: fid, onApprove }: { id: string, onApprove: Function }) => {
 
-        const toggleApprovalMn = useMutation({
-            mutationFn: (id: string) =>
-                approveForum(id),
-            mutationKey: ["toggleForumApproval", fid]
-        });
+        const toggleApprovalMn = useMutation(
+            {
+                mutationFn: (id: string) =>
+                    approveForum(id),
+                onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
+                    queryClient.invalidateQueries({ queryKey: ['published_forums'] });
+                },
+            }
+        );
 
         const handleApprove = (id: string) => {
             // if (!toggleApprovalMn.isLoading) {

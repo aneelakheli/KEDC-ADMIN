@@ -35,7 +35,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
     });
     const [isLoading, setIsLoading] = useState(false);
 
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<>({});
 
 
     // Category(Subject) Field Options
@@ -54,7 +54,6 @@ function ForumForm({ forumId }: { forumId?: string }) {
     useEffect(() => {
         if (bookData) {
             setFormData({ ...bookData, gradeId: bookData.grade?._id || '', subject: bookData.category?._id || '' });
-            console.log("data loading lkajflkdjas+++++++", bookData.grade?._id, bookData.category?._id)
             setChanged(false);
         }
     }, [bookData]);
@@ -79,7 +78,6 @@ function ForumForm({ forumId }: { forumId?: string }) {
     };
 
     const handleRemoveImageUrl = (urlToRemove: string) => {
-        console.log(formData,"Removing URL=========", urlToRemove);
         setFormData({ ...formData, imageUrl: formData.imageUrl.filter(url => url !== urlToRemove), image: formData.image.filter((img, index)=> img) });
         setChanged(true);
     };
@@ -199,7 +197,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
                                 type="text"
                                 name="title"
                                 placeholder="Conversation Title"
-                                value={formData.name}
+                                value={formData.title}
                                 onChange={handleInputChange}
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             />

@@ -1,13 +1,13 @@
 'use client'
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
 import { deleteBook, getAllBooks, getOneBook } from '@/serivces/bookService';
 import { useEffect, useState } from "react";
 import notify from "@/utils/notify";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
-import { getAllForumReplies, getOneForum } from "@/serivces/forumService";
+import { approveForum, deleteForum, getAllForumReplies, getOneForum } from "@/serivces/forumService";
 import ForumCommentForm from "./ForumCommentForm";
 import ForumForm from "./ForumForm";
 import { FaCheckCircle, FaTimesCircle, FaTrash } from "react-icons/fa";
@@ -27,6 +27,9 @@ function ForumDetail({ id }) {
   const { user } = useAuth();
   const [showUnpublished, setShowUnpublished] = useState(false);
   const [commentsData, setCommentsData] = useState(null);
+
+  const queryClient = useQueryClient();
+
 
   const { data: forumData, isSuccess, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['forumDetail', id],
@@ -51,17 +54,15 @@ function ForumDetail({ id }) {
 
       if (showUnpublished) {
         setCommentsData(unpublishedCommentsData);
-        console.log("logging unpublished Comments================", unpublishedCommentsData);
       }
       else {
         setCommentsData(publishedCommentsData);
-        console.log("logging published Comments ================", publishedCommentsData);
       }
     }
   }, [showUnpublished, isUnpublishedSuccess, isPublishedSuccess])
 
 
-  const DeleteBookComponent = ({ bookId }: { bookId: String }) => {
+  const DeleteBookComponent = ({ forumId }: { forumId: string }) => {
 
     const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
@@ -69,17 +70,17 @@ function ForumDetail({ id }) {
     const handleDelete = async () => {
       setIsDeletionLoading(true);
       try {
-        // console.log("dlakjfkl", bookId);
-        const response = await deleteBook(bookId);
+        // console.log("dlakjfkl", forumId);
+        const response = await deleteForum(forumId);
 
         if (response.success === true) {
-          console.log("Book successfully deleted", response.data);
-          notify("Book successfully deleted!", "success");
-          // refetchBooks();
-          router.push(`/books/`);
+          console.log("Forum successfully deleted", response.data);
+          notify("Forum successfully deleted!", "success");
+          // refetchForums();
+          router.push(`/forum/`);
         }
         else {
-          console.error("Error deleting Book", response, "Data:", response.data);
+          console.error("Error deleting Forum", response, "Data:", response.data);
         }
       }
       catch (error) {
@@ -91,26 +92,65 @@ function ForumDetail({ id }) {
       }
     }
 
+    const toggleApprovalMn = useMutation(
+      {
+        mutationFn: (id: string) =>
+          approveForum(id, false),
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
+          queryClient.invalidateQueries({ queryKey: ['published_forums'] });
+          notify("Forum successfully UnPublished!", "success");
+
+        },
+      }
+    );
+
+    const handleUnpublish = () => {
+      toggleApprovalMn.mutate(forumId);
+    }
+
     return (
-      <div className="flex justify-center items-center">
-        {isDeletionLoading ? (
-          <button className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-red rounded hover:bg-red">
-            <div
-              className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-              role="status">
-              <span
-                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-              >Loading...
-              </span>
-            </div>
-            Delete
-          </button>
-        ) : (
-          <button className="px-4 py-2 text-white bg-red rounded hover:bg-red" onClick={handleDelete}>
-            Delete
-          </button>
-        )}
-      </div>
+      <>
+       <div className="flex justify-center items-center">
+          {toggleApprovalMn.isPending ? (
+            <button className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-lightred rounded hover:bg-red">
+              <div
+                className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                role="status">
+                <span
+                  className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                >Loading...
+                </span>
+              </div>
+              UnPublish
+            </button>
+          ) : (
+            <button className="px-4 py-2 text-white bg-lightred rounded hover:bg-red" onClick={handleUnpublish}>
+              UnPublish
+            </button>
+          )}
+        </div>
+        <div className="flex justify-center items-center">
+          {isDeletionLoading ? (
+            <button className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-red rounded hover:bg-red">
+              <div
+                className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                role="status">
+                <span
+                  className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                >Loading...
+                </span>
+              </div>
+              Delete
+            </button>
+          ) : (
+            <button className="px-4 py-2 text-white bg-red rounded hover:bg-red" onClick={handleDelete}>
+              Delete
+            </button>
+          )}
+        </div>
+      </>
+
     )
   }
 
@@ -172,7 +212,7 @@ function ForumDetail({ id }) {
                     Edit
                   </Link> */}
                   {['Admin', 'Author'].includes(user.role) && (
-                    <DeleteBookComponent bookId={id} />
+                    <DeleteBookComponent forumId={id} />
                   )}
                 </div>
               )}
