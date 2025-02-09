@@ -1,7 +1,7 @@
 // middleware.js
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function middleware(req) {
+export async function middleware(req: NextRequest) {
     console.log("Inside Middleware");
     // Example: Parse user role from cookies, headers, or tokens
     const authorizationHeader = req.headers.get('authorization');
@@ -39,7 +39,7 @@ export async function middleware(req) {
 }
 
 // Example function to fetch user role based on token
-async function fetchUserRole(token) {
+async function fetchUserRole(token: string) {
     // Decode the token or call an API to get the user role
     const response = await fetch('https://your-api.com/auth/role', {
         headers: {

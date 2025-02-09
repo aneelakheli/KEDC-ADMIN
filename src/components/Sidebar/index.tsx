@@ -8,6 +8,7 @@ import { MdContacts, MdOutlineAbc, MdOutlineForum } from "react-icons/md";
 import { TfiLayoutSlider } from "react-icons/tfi";
 import { FaCircleInfo } from "react-icons/fa6";
 import { SiGoogleforms } from "react-icons/si";
+import { VscFeedback } from "react-icons/vsc";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -56,7 +57,7 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "/",
-        users: ['Admin','Teacher','Author']
+        users: ['Admin', 'Teacher', 'Author']
       },
       {
         icon: (
@@ -112,7 +113,7 @@ const menuGroups = [
         ),
         label: "Forum",
         route: "/forum",
-        users: ['Admin','Author', 'Teacher']
+        users: ['Admin', 'Author', 'Teacher']
       },
       {
         icon: (
@@ -146,7 +147,14 @@ const menuGroups = [
         route: "/inquiries",
         users: ['Admin']
       },
-
+      {
+        icon: (
+          <VscFeedback />
+        ),
+        label: "Amendments",
+        route: "/amendments",
+        users: ['Admin']
+      },
       {
         icon: (
           <TfiLayoutSlider />

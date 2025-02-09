@@ -7,6 +7,7 @@ import { useState } from "react";
 import notify from "@/utils/notify";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import AmendmentTable from "../feedback/AmendmentTable";
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
   return (
@@ -19,12 +20,13 @@ function ErrorComponent({ errorMessage }: { errorMessage: string }) {
   );
 }
 
-function BookDetail({ id }) {
-  const { user } = useAuth();
+function BookDetail({ id }: { id: string }) {
+  const authData = useAuth();
 
   const { data: bookData, isSuccess, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['books', id],
     queryFn: () => getOneBook(id),
+    enabled: !!id
   })
   console.log(isLoading, error, isError, isLoading, bookData?.data);
 
@@ -33,7 +35,7 @@ function BookDetail({ id }) {
     queryFn: getAllBooks,
   })
 
-  const DeleteBookComponent = ({ bookId }: { bookId: String }) => {
+  const DeleteBookComponent = ({ bookId }: { bookId: string }) => {
 
     const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
@@ -54,7 +56,7 @@ function BookDetail({ id }) {
           console.error("Error deleting Book", response, "Data:", response.data);
         }
       }
-      catch (error) {
+      catch (error: any) {
         console.error("Caught Error", error.response.status, error.response.data.error);
         return;
       }
@@ -88,90 +90,93 @@ function BookDetail({ id }) {
 
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Book Details</h2>
-      {isLoading && (
-        <div className=" w-full flex justify-center items-center my-16">
-          <div className="h-48">
-            <div className="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute"></div>
+    <>
+      <div className="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800 my-4">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Book Details</h2>
+        {isLoading && (
+          <div className=" w-full flex justify-center items-center my-16">
+            <div className="h-48">
+              <div className="rounded-md h-12 w-12 border-4 border-t-4 border-blue-500 animate-spin absolute"></div>
+            </div>
+            <div className="text-xl font-semibold my-4 ">Loading <span className="animate-ping">...</span></div>
           </div>
-          <div className="text-xl font-semibold my-4 ">Loading <span className="animate-ping">...</span></div>
-        </div>
 
-      )}
+        )}
 
-      {isError && (<ErrorComponent errorMessage={error.message} />)}
+        {isError && (<ErrorComponent errorMessage={error.message} />)}
 
-      {isSuccess && bookData &&
-        (
-          <div>
-            <div className="grid grid-rows-2 md:grid-rows-1 grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative">
-                <Image
-                  src={bookData.image}
-                  fill={true}
-                  alt="Book Image"
-                  className="rounded-lg cursor-pointer"
-                  objectFit="contain"
-                />
-              </div>
-              <div className="flex flex-col">
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Title:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.name}</span>
-                </div>
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Author:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.author}</span>
-                </div>
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Category:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.category?.name}</span>
-                </div>
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Publication:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.publication}</span>
-                </div>
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Editor:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.editor}</span>
-                </div>
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Price:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">Rs. {bookData.price}</span>
-                </div>
-                <div className="mb-4">
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">Grade:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">{bookData.grade?.name}</span>
-                </div>
-              </div>
-            </div>
+        {isSuccess && bookData &&
+          (
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white my-6">Book Description</h2>
-              <div className="ml-2 text-gray-900 dark:text-white">
-                {bookData.description} Some random description here
+              <div className="grid grid-rows-2 md:grid-rows-1 grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative">
+                  <Image
+                    src={bookData.image}
+                    fill={true}
+                    alt="Book Image"
+                    className="rounded-lg cursor-pointer"
+                    objectFit="contain"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Title:</span>
+                    <span className="ml-2 text-gray-900 dark:text-white">{bookData.name}</span>
+                  </div>
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Author:</span>
+                    <span className="ml-2 text-gray-900 dark:text-white">{bookData.author}</span>
+                  </div>
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Category:</span>
+                    <span className="ml-2 text-gray-900 dark:text-white">{bookData.category?.name}</span>
+                  </div>
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Publication:</span>
+                    <span className="ml-2 text-gray-900 dark:text-white">{bookData.publication}</span>
+                  </div>
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Editor:</span>
+                    <span className="ml-2 text-gray-900 dark:text-white">{bookData.editor}</span>
+                  </div>
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Price:</span>
+                    <span className="ml-2 text-gray-900 dark:text-white">Rs. {bookData.price}</span>
+                  </div>
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">Grade:</span>
+                    <span className="ml-2 text-gray-900 dark:text-white">{bookData.grade?.name}</span>
+                  </div>
+                </div>
               </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white my-6">Book Description</h2>
+                <div className="ml-2 text-gray-900 dark:text-white">
+                  {bookData.description} Some random description here
+                </div>
+              </div>
+              {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
+                <div className="flex space-x-4 mt-8">
+                  <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                    Edit
+                  </Link>
+                  {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
+                    <DeleteBookComponent bookId={id} />
+                  )}
+                </div>
+              )}
             </div>
-            {['Admin', 'Author'].includes(user.role) && (
-              <div className="flex space-x-4 mt-8">
-                <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
-                  Edit
-                </Link>
-                {['Admin', 'Author'].includes(user.role) && (
-                  <DeleteBookComponent bookId={id} />
-                )}
-              </div>
-            )}
+          )}
+
+        {!bookData && (
+          <div className="w-full flex justify-center items-center my-16">
+            <div className="text-xl font-semibold my-4 ">No book found with id {id}</div>
           </div>
         )}
 
-      {!bookData && (
-        <div className="w-full flex justify-center items-center my-16">
-          <div className="text-xl font-semibold my-4 ">No book found with id {id}</div>
-        </div>
-      )}
-
-    </div>
+      </div>
+      <AmendmentTable bookId={id} />
+    </>
   )
 }
 

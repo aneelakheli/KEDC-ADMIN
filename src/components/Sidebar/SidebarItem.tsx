@@ -32,6 +32,8 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
         >
           {item.icon}
           {item.label}
+          {/* <div className="rounded-full p-2 text-red text-sm bg-gray">300</div> */}
+          
           {item.children && (
             <svg
               className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${

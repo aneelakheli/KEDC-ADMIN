@@ -14,7 +14,7 @@ export const getAllPublishedForums = async () => {
 // Get all unpublished forums
 export const getAllUnpublishedForums = async () => {
     try {
-        const response = await get('/forum/');
+        const response = await get('/forum/unpublished');
         console.log("Logging response ++++++++", response);
         return response.data;
     } catch (error) {

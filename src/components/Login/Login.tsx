@@ -119,7 +119,7 @@ const LoginComponent = () => {
                                 />
                             </div>
                             <div className="mt-8">
-                                <button className="bg-red-500 text-white font-bold py-2 px-4 w-full rounded hover:bg-red-400">Login</button>
+                                <button className="bg-red text-white font-bold py-2 px-4 w-full rounded hover:bg-lightred">Login</button>
                             </div>
                         </form>
 
