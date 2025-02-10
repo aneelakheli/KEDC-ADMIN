@@ -28,6 +28,7 @@ function AmendmentForm() {
         queryKey: ['amendment', amendmentId],
         queryFn: () => getOneAmendment(amendmentId!),
         enabled: !!amendmentId,
+        select: (data) => data.data
     });
 
     const [formData, setFormData] = useState<IAmendmentForm>({
@@ -46,6 +47,11 @@ function AmendmentForm() {
             setFormData(amendmentData);
         }
     }, [amendmentData]);
+
+    useEffect(() => {
+        if (bookId)
+            setFormData({ ...formData, bookId })
+    }, [bookId])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -82,7 +88,7 @@ function AmendmentForm() {
                 const response = await addAmendment(formData);
                 if (response.success) {
                     notify("Amendment successfully created", "success");
-                    router.push('/dashboard/amendments');
+                    router.back();
                 } else {
                     notify("Failed to create amendment", "error");
                 }
@@ -95,6 +101,7 @@ function AmendmentForm() {
     };
 
     const handleEdit = async (e: FormEvent<HTMLElement>) => {
+        if (!amendmentId) return;
         e.preventDefault();
         const newErrors = validateForm();
         if (Object.keys(newErrors).length > 0) {
@@ -103,7 +110,7 @@ function AmendmentForm() {
         } else {
             setIsLoading(true);
             try {
-                const response = await updateAmendment(amendmentId!, formData);
+                const response = await updateAmendment(amendmentId, formData);
                 if (response.success) {
                     notify("Amendment successfully updated", "success");
                 } else {

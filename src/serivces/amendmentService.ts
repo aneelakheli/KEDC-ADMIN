@@ -13,7 +13,7 @@ export const getAllAmendments = async (bookId: string) => {
 
 export const addAmendment = async (payload: IAmendmentForm) => {
     try {
-        const response = await post('/bookamendment/amendment/', payload, true);
+        const response = await post('/bookamendment/amendment/', payload);
         return response;
     } catch (error) {
         throw error;
@@ -23,7 +23,7 @@ export const addAmendment = async (payload: IAmendmentForm) => {
 export const getOneAmendment = async (id: string) => {
     try {
         const response = await get(`/bookamendment/amendment/${id}`);
-        return response.getOneInquiry;
+        return response;
     } catch (error) {
         throw error;
     }
