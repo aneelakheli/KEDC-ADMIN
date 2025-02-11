@@ -59,10 +59,10 @@ function AmendmentForm() {
         setErrors({ ...errors, [name]: '' });
     };
 
-    const handleDescriptionChange = (value: string) => {
-        setFormData({ ...formData, description: value });
-        setErrors({ ...errors, description: '' });
-    };
+    // const handleDescriptionChange = (value: string) => {
+    //     setFormData({ ...formData, description: value });
+    //     setErrors({ ...errors, description: '' });
+    // };
 
     const validateForm = () => {
         const newErrors: AmendmentErrors = {};
@@ -183,7 +183,15 @@ function AmendmentForm() {
                         </div>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">Description</label>
-                            <ReactQuill theme="snow" value={formData.description} onChange={handleDescriptionChange} />
+                            {/* <ReactQuill theme="snow" value={formData.description} onChange={handleDescriptionChange} /> */}
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                placeholder="Description..."
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                rows={3}
+                            />
                             {errors.description && <p className="text-red-500 text-xs mt-2">{errors.description}</p>}
                         </div>
                         <div>

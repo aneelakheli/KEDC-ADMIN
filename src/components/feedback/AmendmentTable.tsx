@@ -80,12 +80,14 @@ const AmendmentTable = ({ bookId }: { bookId: string }) => {
         <div className='flex items-center'>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Book Amendments</h2>
         </div>
-        <div>
-          <Link href={`/amendments/add?bookId=${bookId}`} className="flex flex-col gap-2 justify-center items-center font-medium ">
-            <FaPlus className="text-xl" />
-            Add New Amendment
-          </Link>
-        </div>
+        {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
+
+          <div>
+            <Link href={`/amendments/add?bookId=${bookId}`} className="flex flex-col gap-2 justify-center items-center font-medium ">
+              <FaPlus className="text-xl" />
+              Add New Amendment
+            </Link>
+          </div>)}
       </div>
       <div className="grid grid-cols-12 border-t gap-2 border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5">
         <div className="col-span-2 flex items-center">
@@ -123,11 +125,11 @@ const AmendmentTable = ({ bookId }: { bookId: string }) => {
           <div className="col-span-1 flex items-center">
             <div className="flex">
 
-              <Link href={`/inquiries/${amendment._id}`}>
+              {/* <Link href={`/inquiries/${amendment._id}`}> */}
                 <p className="text-sm text-black dark:text-white">
                   {amendment?.title}
                 </p>
-              </Link>
+              {/* </Link> */}
             </div>
           </div>
           <div className="col-span-1 flex items-center break-words">
