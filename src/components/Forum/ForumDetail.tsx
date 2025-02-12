@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import notify from "@/utils/notify";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
-import { approveForum, deleteForum, getAllForumReplies, getOneForum } from "@/serivces/forumService";
+import { approveForum, approveForumReply, deleteForum, getAllForumReplies, getOneForum, getPublishedForumReplies } from "@/serivces/forumService";
 import ForumCommentForm from "./ForumCommentForm";
 import ForumForm from "./ForumForm";
 import { FaCheckCircle, FaTimesCircle, FaTrash } from "react-icons/fa";
@@ -24,7 +24,7 @@ function ErrorComponent({ errorMessage }: { errorMessage: string }) {
 }
 
 function ForumDetail({ id }) {
-  const { user } = useAuth();
+  const authData = useAuth();
   const [showUnpublished, setShowUnpublished] = useState(false);
   const [commentsData, setCommentsData] = useState(null);
 
@@ -34,12 +34,20 @@ function ForumDetail({ id }) {
   const { data: forumData, isSuccess, isLoading, error, isError, refetch } = useQuery({
     queryKey: ['forumDetail', id],
     queryFn: () => getOneForum(id),
+
   })
-  console.log(isLoading, error, isError, isLoading, forumData?.data);
+  // console.log(isLoading, error, isError, isLoading, forumData?.data, "forum data +++");?÷
+  // useEffect(()=>{
+  //   console.log("forum data -----------", responseData, forumData);
+  // },[responseData])
+
+  useEffect(() => {
+    console.log("error", error)
+  }, [error])
 
   const { data: publishedCommentsData, isLoading: isPublishedCommentLoading, error: isPublishedCommentError, isSuccess: isPublishedSuccess, refetch: refetchPublishedComments } = useQuery({
     queryKey: ['forumPublishedComments', id],
-    queryFn: () => getAllForumReplies(id),
+    queryFn: () => getPublishedForumReplies(id),
     enabled: !showUnpublished
   })
 
@@ -49,8 +57,38 @@ function ForumDetail({ id }) {
     enabled: showUnpublished
   })
 
+  const approveCommentMn = useMutation(
+    {
+      mutationFn: (ReplyId: string) =>
+        approveForumReply(id, ReplyId, true),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['forumPublishedComments', id] });
+        queryClient.invalidateQueries({ queryKey: ['forumUnpublishedComments', id] });
+        notify("Forum Reply successfully Published!", "success");
+      },
+      onError: () => {
+        notify("Failed to approve reply.", "error")
+      }
+    }
+  );
+
+  const unApproveCommentMn = useMutation(
+    {
+      mutationFn: (ReplyId: string) =>
+        approveForumReply(id, ReplyId, false),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['forumPublishedComments', id] });
+        queryClient.invalidateQueries({ queryKey: ['forumUnpublishedComments', id] });
+        notify("Forum Reply successfully UnPublished!", "success");
+      },
+      onError: () => {
+        notify("Failed to remove reply approval.", "error")
+      }
+    }
+  );
+
   useEffect(() => {
-    if (!isPublishedCommentLoading && !isUnPublishedCommentLoading) {
+    if (!isPublishedCommentLoading && !isPublishedCommentLoading) {
 
       if (showUnpublished) {
         setCommentsData(unpublishedCommentsData);
@@ -59,8 +97,16 @@ function ForumDetail({ id }) {
         setCommentsData(publishedCommentsData);
       }
     }
-  }, [showUnpublished, isUnpublishedSuccess, isPublishedSuccess])
+  }, [showUnpublished, publishedCommentsData, unpublishedCommentsData, isPublishedCommentLoading, isPublishedCommentLoading])
 
+
+  const handleUnpublishReply = (replyId: string) => {
+    unApproveCommentMn.mutate(replyId);
+  }
+
+  const handlePublishReply = (replyId: string) => {
+    approveCommentMn.mutate(replyId);
+  }
 
   const DeleteBookComponent = ({ forumId }: { forumId: string }) => {
 
@@ -100,6 +146,7 @@ function ForumDetail({ id }) {
           queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
           queryClient.invalidateQueries({ queryKey: ['published_forums'] });
           notify("Forum successfully UnPublished!", "success");
+          router.push(`/forum/`);
 
         },
       }
@@ -111,7 +158,7 @@ function ForumDetail({ id }) {
 
     return (
       <>
-       <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center">
           {toggleApprovalMn.isPending ? (
             <button className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-lightred rounded hover:bg-red">
               <div
@@ -130,7 +177,7 @@ function ForumDetail({ id }) {
             </button>
           )}
         </div>
-        <div className="flex justify-center items-center">
+        {/* <div className="flex justify-center items-center">
           {isDeletionLoading ? (
             <button className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-red rounded hover:bg-red">
               <div
@@ -148,7 +195,7 @@ function ForumDetail({ id }) {
               Delete
             </button>
           )}
-        </div>
+        </div> */}
       </>
 
     )
@@ -206,12 +253,12 @@ function ForumDetail({ id }) {
                   {forumData.description}
                 </div>
               </div>
-              {['Admin', 'Author'].includes(user.role) && (
+              {authData?.user?.role && ['Admin', 'Author'].includes(authData.user.role) && (
                 <div className="flex justify-end space-x-4 mt-8">
                   {/* <Link href={`/books/edit/${id}`} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
                     Edit
                   </Link> */}
-                  {['Admin', 'Author'].includes(user.role) && (
+                  {authData?.user.role && ['Admin', 'Author'].includes(authData.user.role) && (
                     <DeleteBookComponent forumId={id} />
                   )}
                 </div>
@@ -232,36 +279,37 @@ function ForumDetail({ id }) {
 
 
           {/* To be shown only to admin and the related users */}
-          <div>
-            <div className="flex text-sm items-center justify-center py-4">
-              <div className="flex border border-lightred font-medium rounded-full overflow-hidden">
-                {/* Published Button */}
-                <button
-                  className={`px-4 py-2 ${!showUnpublished
-                    ? "bg-lightred text-gray-2"
-                    : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
-                    }`}
-                  onClick={() => setShowUnpublished(false)}
-                >
-                  Published
-                </button>
+          {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
 
-                {/* Unpublished Button */}
-                <button
-                  className={`px-4 py-2 ${showUnpublished
-                    ? "bg-lightred text-gray-2"
-                    : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
-                    }`}
-                  onClick={() => setShowUnpublished(true)}
-                >
-                  Unpublished
-                </button>
+            <div>
+              <div className="flex text-sm items-center justify-center py-4">
+                <div className="flex border border-lightred font-medium rounded-full overflow-hidden">
+                  {/* Published Button */}
+                  <button
+                    className={`px-4 py-2 ${!showUnpublished
+                      ? "bg-lightred text-gray-2"
+                      : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
+                      }`}
+                    onClick={() => setShowUnpublished(false)}
+                  >
+                    Published
+                  </button>
+
+                  {/* Unpublished Button */}
+                  <button
+                    className={`px-4 py-2 ${showUnpublished
+                      ? "bg-lightred text-gray-2"
+                      : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
+                      }`}
+                    onClick={() => setShowUnpublished(true)}
+                  >
+                    Unpublished
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
+            </div>)}
 
         </h2>
-
 
 
         {commentsData && commentsData.length > 0 ? (
@@ -276,7 +324,7 @@ function ForumDetail({ id }) {
                   <div className="flex items-center">
                     <div className="relative h-12 w-12">
                       <Image
-                        src={comment.image?.[0] || "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.sWCvltMZF_s3mjA5sL-RdgHaE8%26pid%3DApi&f=1&ipt=e28cd914b5e66fe7d48ce2ea62ce3e9a598fd9f8e2b9458cabfd9cad6fcc8679&ipo=images"}
+                        src={"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.sWCvltMZF_s3mjA5sL-RdgHaE8%26pid%3DApi&f=1&ipt=e28cd914b5e66fe7d48ce2ea62ce3e9a598fd9f8e2b9458cabfd9cad6fcc8679&ipo=images"}
                         alt="Commenter's avatar"
                         fill={true}
                         className="rounded-full object-cover"
@@ -295,7 +343,7 @@ function ForumDetail({ id }) {
                   <div className="ml-4 text-2xl flex gap-4">
                     {
                       <button
-                        onClick={() => { }}
+                        onClick={() => comment.isPublished ? handleUnpublishReply(comment._id) : handlePublishReply(comment._id)}
                         className="text-2xl"
                         disabled={false}
                       >
@@ -311,7 +359,7 @@ function ForumDetail({ id }) {
                             </div>
                           )
                         }
-                        {true ? (
+                        {comment.isPublished ? (
                           <FaTimesCircle className="text-red-500" />
                         ) : (
                           <FaCheckCircle className="text-green-500" />
@@ -319,7 +367,7 @@ function ForumDetail({ id }) {
                       </button>
                     }
 
-                    <button
+                    {/* <button
                       onClick={() => { }}
                       className="text-2xl"
                       disabled={false}
@@ -338,7 +386,7 @@ function ForumDetail({ id }) {
                       }
                       <FaTrash className="hover:text-lightred" />
 
-                    </button>
+                    </button> */}
                   </div>
 
 

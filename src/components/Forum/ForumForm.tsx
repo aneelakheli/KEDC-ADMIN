@@ -110,7 +110,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
                 const response = await addForum(formData);
                 if (response.success === true) {
                     notify("Forum Uploaded Successfully", "success")
-                    router.push(`/forum/${response.data._id}`);
+                    router.push(`/forum`);
                 }
                 else {
                     console.error("Error uploading book", response, "Data:", response.data);

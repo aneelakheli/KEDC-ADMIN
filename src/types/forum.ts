@@ -23,4 +23,5 @@ export type ResponseForum = {
     alt?: string;
     user?: User | string;
     isPublished:false;
+    childForumCount: number;
 }

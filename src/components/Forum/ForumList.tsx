@@ -225,7 +225,7 @@ const ForumList = () => {
                                     <DeleteForumComponent id={forum?._id} onDelete={handleRefetch} />
 
                                     <div>
-                                        <div className="rounded-full p-2 text-sm bg-gray">30</div>
+                                        <div className="rounded-full p-2 text-sm bg-gray">{forum.childForumCount}</div>
                                     </div>
                                 </div>
                             }
