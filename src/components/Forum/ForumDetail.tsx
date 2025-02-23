@@ -11,6 +11,7 @@ import { approveForum, approveForumReply, deleteForum, getAllForumReplies, getOn
 import ForumCommentForm from "./ForumCommentForm";
 import ForumForm from "./ForumForm";
 import { FaCheckCircle, FaTimesCircle, FaTrash } from "react-icons/fa";
+import Tooltip from "../Tooltip";
 
 function ErrorComponent({ errorMessage }: { errorMessage: string }) {
   return (
@@ -341,6 +342,8 @@ function ForumDetail({ id }) {
                   </div>
 
                   <div className="ml-4 text-2xl flex gap-4">
+                  <Tooltip content={comment.isPublished ? 'Unpublish comment':'Publish Comment'} className="">
+
                     {
                       <button
                         onClick={() => comment.isPublished ? handleUnpublishReply(comment._id) : handlePublishReply(comment._id)}
@@ -366,6 +369,7 @@ function ForumDetail({ id }) {
                         )}
                       </button>
                     }
+                    </Tooltip>
 
                     {/* <button
                       onClick={() => { }}

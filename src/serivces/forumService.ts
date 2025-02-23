@@ -4,7 +4,7 @@ import { Forum, ForumReply } from '@/types/forum';
 // Get all published forums
 export const getAllPublishedForums = async () => {
     try {
-        const response = await get('/forum/published');
+        const response = await get('/forum/');
         return response.data;
     } catch (error) {
         throw error;

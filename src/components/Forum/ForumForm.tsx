@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addBook, updateBook } from '@/serivces/bookService';
 import React, { useState, useEffect } from 'react';
 import { getOneBook } from '@/serivces/bookService';
@@ -36,7 +36,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const [errors, setErrors] = useState<>({});
-
+    const queryClient = useQueryClient();
 
     // Category(Subject) Field Options
     const [showSubjectModal, setShowSubjectModal] = useState(false);
@@ -100,6 +100,7 @@ function ForumForm({ forumId }: { forumId?: string }) {
     const handleCreate = async (e) => {
         e.preventDefault();
         const newErrors = validateForm();
+
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
@@ -109,6 +110,8 @@ function ForumForm({ forumId }: { forumId?: string }) {
                 console.log("Forum Data", formData);
                 const response = await addForum(formData);
                 if (response.success === true) {
+                    queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
+                    queryClient.invalidateQueries({ queryKey: ['published_forums'] });
                     notify("Forum Uploaded Successfully", "success")
                     router.push(`/forum`);
                 }
@@ -140,7 +143,8 @@ function ForumForm({ forumId }: { forumId?: string }) {
                 const response = await updateBook(forumId, formData);
                 console.log("Response status", response.success, response.success === true, response.success == true);
                 if (response.success === true) {
-                    console.log("Forum successfully Updated");
+                    queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
+                    queryClient.invalidateQueries({ queryKey: ['published_forums'] });
                     notify("Forum successfully Updated", "success");
                 }
                 else {
