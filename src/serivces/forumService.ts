@@ -4,7 +4,7 @@ import { Forum, ForumReply } from '@/types/forum';
 // Get all published forums
 export const getAllPublishedForums = async () => {
     try {
-        const response = await get('/forum/');
+        const response = await get('/forum/published');
         return response.data;
     } catch (error) {
         throw error;
@@ -108,9 +108,9 @@ export const addForumReply = async (forumId: string, replyData: ForumReply) => {
 };
 
 // Get all replies for a forum post
-export const getAllForumReplies = async (forumId: string) => {
+export const getUnpublishedForumReplies = async (forumId: string) => {
     try {
-        const response = await get(`/forum/${forumId}/replies`);
+        const response = await get(`/forum/${forumId}/unpublished`);
         console.log("Forum Replies Response +++++++++", response);
         return response.data;
     } catch (error) {
@@ -122,7 +122,7 @@ export const getAllForumReplies = async (forumId: string) => {
 // Get published replies for a forum post
 export const getPublishedForumReplies = async (forumId: string) => {
     try {
-        const response = await get(`/forum/${forumId}/replies/published`);
+        const response = await get(`/forum/${forumId}/published`);
         return response.data;
     } catch (error) {
         throw error;

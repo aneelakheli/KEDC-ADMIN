@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import notify from "@/utils/notify";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
-import { approveForum, approveForumReply, deleteForum, getAllForumReplies, getOneForum, getPublishedForumReplies } from "@/serivces/forumService";
+import { approveForum, approveForumReply, deleteForum, getAllForumReplies, getOneForum, getPublishedForumReplies, getUnpublishedForumReplies } from "@/serivces/forumService";
 import ForumCommentForm from "./ForumCommentForm";
 import ForumForm from "./ForumForm";
 import { FaCheckCircle, FaTimesCircle, FaTrash } from "react-icons/fa";
@@ -54,7 +54,7 @@ function ForumDetail({ id }) {
 
   const { data: unpublishedCommentsData, isLoading: isUnPublishedCommentLoading, error: isUnPublishedCommentError, isSuccess: isUnpublishedSuccess, refetch: refetchUnpublishedComments } = useQuery({
     queryKey: ['forumUnpublishedComments', id],
-    queryFn: () => getAllForumReplies(id),
+    queryFn: () => getUnpublishedForumReplies(id),
     enabled: showUnpublished
   })
 
