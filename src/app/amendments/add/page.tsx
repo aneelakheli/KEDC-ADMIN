@@ -7,7 +7,7 @@ const Add = () => {
     const breadcrumbs = [
         { label: "Dashboard", href: "/" },
         { label: "Amendments", href: "/amendments" },
-        { label: "add" },
+        { label: "add", title: "Add Book Amendment" },
     ];
 
     return (

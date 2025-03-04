@@ -12,7 +12,7 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { deleteAmendment, getAllAmendments } from "@/serivces/amendmentService";
 import { useAuth } from '@/context/AuthContext';
 
-const AmendmentTable = ({ bookId }: { bookId: string }) => {
+const AmendmentTable = ({ bookId, bookTitle }: { bookId: string, bookTitle?: string }) => {
   const { data: userData, isLoading, error, isError, refetch: refetchInquiries } = useQuery({
     queryKey: ['inquiries'],
     queryFn: () => getAllAmendments(bookId),
@@ -83,7 +83,7 @@ const AmendmentTable = ({ bookId }: { bookId: string }) => {
         {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
 
           <div>
-            <Link href={`/amendments/add?bookId=${bookId}`} className="flex flex-col gap-2 justify-center items-center font-medium ">
+            <Link href={`/amendments/add?bookId=${bookId}&bookTitle=${bookTitle}`} className="flex flex-col gap-2 justify-center items-center font-medium ">
               <FaPlus className="text-xl" />
               Add New Amendment
             </Link>
@@ -126,9 +126,9 @@ const AmendmentTable = ({ bookId }: { bookId: string }) => {
             <div className="flex">
 
               {/* <Link href={`/inquiries/${amendment._id}`}> */}
-                <p className="text-sm text-black dark:text-white">
-                  {amendment?.title}
-                </p>
+              <p className="text-sm text-black dark:text-white">
+                {amendment?.title}
+              </p>
               {/* </Link> */}
             </div>
           </div>

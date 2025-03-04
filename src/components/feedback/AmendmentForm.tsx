@@ -4,10 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { addAmendment, getOneAmendment, updateAmendment } from '@/serivces/amendmentService';
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
-import ReactQuill from "react-quill";
 import notify from "@/utils/notify";
-import { Event } from "@/types/event";
-import { Amendment, IAmendmentForm } from "@/types/amendment";
+import { IAmendmentForm } from "@/types/amendment";
 
 interface AmendmentErrors {
     title?: string,
@@ -23,6 +21,7 @@ function AmendmentForm() {
     const params = useSearchParams();
     const amendmentId = params.get('amendmentId');
     const bookId = params.get('bookId');
+    const bookTitle = params.get('bookTitle');
     const [isLoading, setIsLoading] = useState(false);
     const { data: amendmentData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
         queryKey: ['amendment', amendmentId],
@@ -218,7 +217,12 @@ function AmendmentForm() {
                             />
                             {errors.amendment && <p className="text-red-500 text-xs mt-2">{errors.amendment}</p>}
                         </div>
-                        <div>
+                        {(bookId && bookTitle) ?
+                            (<div>
+                                <span>Book:</span> <span className="text-title-md">{bookTitle}</span>
+                            </div>)
+                            : <></>}
+                        <div className={bookId ? "hidden" : ""}>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                 Book ID
                             </label>
