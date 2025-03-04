@@ -178,7 +178,7 @@ function ForumDetail({ id }) {
             </button>
           )}
         </div>
-        {/* <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center">
           {isDeletionLoading ? (
             <button className="px-4 flex justify-center items-center gap-2 py-2 text-white bg-red rounded hover:bg-red">
               <div
@@ -189,14 +189,16 @@ function ForumDetail({ id }) {
                 >Loading...
                 </span>
               </div>
-              Delete
+              <FaTrash className="text-lightred"/>
             </button>
           ) : (
-            <button className="px-4 py-2 text-white bg-red rounded hover:bg-red" onClick={handleDelete}>
-              Delete
+            <Tooltip content="Delete Forum">
+            <button className="px-4 py-2 text-white group bg-white rounded " onClick={handleDelete}>
+              <FaTrash className="text-lightred group-hover:text-red text-2xl"/>
             </button>
+            </Tooltip>
           )}
-        </div> */}
+        </div>
       </>
 
     )

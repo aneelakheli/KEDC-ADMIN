@@ -21,7 +21,6 @@ const AmendmentTable = ({ bookId, bookTitle }: { bookId: string, bookTitle?: str
   const authData = useAuth();
 
   const router = useRouter();
-  console.log(isLoading, error, isError, isLoading, userData?.data);
 
   const DeleteAmendmentComponent = ({ amendmentId }: { amendmentId: string }) => {
 

@@ -8,6 +8,7 @@ import { FaCheckCircle, FaPlus, FaTrash } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import { approveForum, deleteForum, getAllPublishedForums, getAllUnpublishedForums } from "@/serivces/forumService";
 import { ResponseForum } from "@/types/forum";
+import notify from "@/utils/notify";
 
 const ForumList = () => {
     const authData = useAuth();
@@ -95,6 +96,7 @@ const ForumList = () => {
                 onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
                     queryClient.invalidateQueries({ queryKey: ['published_forums'] });
+                    notify("Forum successfully UnPublished!", "success");
                 },
             }
         );
@@ -223,10 +225,13 @@ const ForumList = () => {
                                     }
 
                                     <DeleteForumComponent id={forum?._id} onDelete={handleRefetch} />
+                                    {
+                                        forum.childForumCount ?
+                                            <div>
+                                                <div className="rounded-full p-2 text-sm bg-gray">{forum.childForumCount}</div>
+                                            </div> : <></>
 
-                                    <div>
-                                        <div className="rounded-full p-2 text-sm bg-gray">{forum.childForumCount}</div>
-                                    </div>
+                                    }
                                 </div>
                             }
 
