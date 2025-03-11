@@ -91,11 +91,11 @@ function ForumDetail({ id }) {
   useEffect(() => {
     if (!isPublishedCommentLoading && !isPublishedCommentLoading) {
 
-      if (showUnpublished) {
-        setCommentsData(unpublishedCommentsData);
+      if (showUnpublished && unpublishedCommentsData) {
+        setCommentsData(unpublishedCommentsData?.childForum);
       }
-      else {
-        setCommentsData(publishedCommentsData);
+      else if(publishedCommentsData){
+        setCommentsData(publishedCommentsData?.childForum);
       }
     }
   }, [showUnpublished, publishedCommentsData, unpublishedCommentsData, isPublishedCommentLoading, isPublishedCommentLoading])
@@ -317,7 +317,7 @@ function ForumDetail({ id }) {
 
         {commentsData && commentsData.length > 0 ? (
           <div className="space-y-4">
-            {commentsData.map((comment, index) => (
+            {commentsData?.map((comment, index) => (
               <div
                 key={index}
                 className="p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
