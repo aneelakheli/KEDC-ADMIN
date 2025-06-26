@@ -183,7 +183,7 @@ function CatalogueDetail({ id }: { id: String }) {
                 {catalogueData.description} Some random description here
               </div>
               <div className="">
-                <QRCodeGenerator id={id} />
+                <QRCodeGenerator id={id} title={catalogueData.title} />
               </div>
             </div>
             {["Admin"].includes(user?.role) && (

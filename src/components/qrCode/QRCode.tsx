@@ -2,7 +2,13 @@ import Image from "next/image";
 import { useRef } from "react";
 import QRCode from "react-qr-code";
 
-export const QRCodeGenerator = ({ id }: { id: String }) => {
+export const QRCodeGenerator = ({
+  id,
+  title,
+}: {
+  id: String;
+  title: string;
+}) => {
   const qrRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadQR = () => {
@@ -15,11 +21,13 @@ export const QRCodeGenerator = ({ id }: { id: String }) => {
     const svgString = serializer.serializeToString(svg);
     const blob = new Blob([svgString], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
+    const sanitizedTitle = title?.replace(/[^a-zA-Z0-9]/g, "_") || "qrcode";
 
+    const fileName = `${sanitizedTitle}_qrcode.svg`;
     // Create a temporary download link
     const link = document.createElement("a");
     link.href = url;
-    link.download = "qrcode.svg"; // Download as SVG
+    link.download = fileName; // Download as SVG
     link.click();
     URL.revokeObjectURL(url);
 
