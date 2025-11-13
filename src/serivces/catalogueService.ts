@@ -1,18 +1,23 @@
-import { get, post, put, patch, del } from '@/serivces/apiClient';
+import { get, post, patch, del } from '@/serivces/apiClient';
 import { Catalogue } from '@/types/catalogue';
+import { FilterParams } from '@/types/query';
 
-export const getAllFreeCatalogues = async () => {
+export const getAllFreeCatalogues = async (params: FilterParams = {}) => {
     try {
-        const response = await get('/catalogue/');
+        const response = await get('/catalogue/', {
+            params,
+        });
         return response;
     } catch (error) {
         throw error;
     }
 };
 
-export const getAllPremiumCatalogues = async () => {
+export const getAllPremiumCatalogues = async (params: FilterParams = {}) => {
     try {
-        const response = await get('/catalogue/premium/');
+        const response = await get('/catalogue/premium/', {
+            params,
+        });
         return response;
     } catch (error) {
         throw error;
