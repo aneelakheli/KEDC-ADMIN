@@ -4,9 +4,7 @@ import { FilterParams } from '@/types/query';
 
 export const getAllFreeCatalogues = async (params: FilterParams = {}) => {
     try {
-        const response = await get('/catalogue/', {
-            params,
-        });
+        const response = await get('/catalogue/', params);
         return response;
     } catch (error) {
         throw error;
@@ -15,9 +13,7 @@ export const getAllFreeCatalogues = async (params: FilterParams = {}) => {
 
 export const getAllPremiumCatalogues = async (params: FilterParams = {}) => {
     try {
-        const response = await get('/catalogue/premium/', {
-            params,
-        });
+        const response = await get('/catalogue/premium/', params);
         return response;
     } catch (error) {
         throw error;
