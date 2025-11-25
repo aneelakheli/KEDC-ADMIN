@@ -1,11 +1,15 @@
 'use client'
+import { useState } from "react";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import FreeCatalogues from "./FreeCatalogues";
 import PaidCatalogues from "./PaidCatalogues";
 import { useAuth } from "@/context/AuthContext";
 
+type TabType = 'free' | 'premium';
+
 const CatalogueTable = () => {
+    const [activeTab, setActiveTab] = useState<TabType>('free');
     const authData = useAuth();
 
     return (
@@ -19,8 +23,38 @@ const CatalogueTable = () => {
                         </Link>
                     )
                 }
-                <FreeCatalogues />
-                <PaidCatalogues />
+
+                {/* Tabs Navigation */}
+                <div className="mb-6 border-b border-stroke dark:border-strokedark">
+                    <nav className="flex gap-2" aria-label="Tabs">
+                        <button
+                            onClick={() => setActiveTab('free')}
+                            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
+                                activeTab === 'free'
+                                    ? 'border-primary text-primary'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            Free Resources
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('premium')}
+                            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
+                                activeTab === 'premium'
+                                    ? 'border-primary text-primary'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200'
+                            }`}
+                        >
+                            Premium Resources
+                        </button>
+                    </nav>
+                </div>
+
+                {/* Tab Content */}
+                <div>
+                    {activeTab === 'free' && <FreeCatalogues />}
+                    {activeTab === 'premium' && <PaidCatalogues />}
+                </div>
             </div>
         </div>
     );

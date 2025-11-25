@@ -1,21 +1,29 @@
 'use client'
 import Image from "next/image";
-import moment from 'moment';
-
+import { useState } from 'react';
 import Link from "next/link";
-import { Book } from "@/types/book";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBooks } from '@/serivces/bookService';
-import { FaPlus } from "react-icons/fa";
 import { getAllFreeCatalogues } from "@/serivces/catalogueService";
 import { Catalogue } from "@/types/catalogue";
-import { MdOutlineWorkspacePremium } from "react-icons/md";
+import Pagination from "../common/Pagination";
 
 const FreeCatalogues = () => {
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(12)
+
     const { data: catalogueData, isLoading, error, isError } = useQuery({
-        queryKey: ['freeCatalogues'],
-        queryFn: getAllFreeCatalogues,
+        queryKey: ['freeCatalogues', page, limit],
+        queryFn: () => getAllFreeCatalogues({ page, limit }),
     })
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage)
+    }
+
+    const handleLimitChange = (newLimit: number) => {
+        setLimit(newLimit)
+        setPage(1) // Reset to first page when limit changes
+    }
 
     console.log(isLoading, error, isError, catalogueData?.data);
 
@@ -67,6 +75,19 @@ const FreeCatalogues = () => {
                 ))}
 
             </div>
+
+            {/* Pagination Controls */}
+            {catalogueData?.data?.length > 0 && (
+                <Pagination
+                    currentPage={page}
+                    totalPages={catalogueData?.totalPages || 1}
+                    totalItems={catalogueData?.total}
+                    limit={limit}
+                    isLoading={isLoading}
+                    onPageChange={handlePageChange}
+                    onLimitChange={handleLimitChange}
+                />
+            )}
         </div>
 
     );
