@@ -147,14 +147,14 @@ const menuGroups = [
         route: "/inquiries",
         users: ['Admin']
       },
-      {
-        icon: (
-          <VscFeedback />
-        ),
-        label: "Amendments",
-        route: "/amendments",
-        users: ['Admin']
-      },
+      // {
+      //   icon: (
+      //     <VscFeedback />
+      //   ),
+      //   label: "Amendments",
+      //   route: "/amendments",
+      //   users: ['Admin']
+      // },
       {
         icon: (
           <TfiLayoutSlider />

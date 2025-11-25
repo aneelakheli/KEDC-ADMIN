@@ -4,10 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { addAmendment, getOneAmendment, updateAmendment } from '@/serivces/amendmentService';
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'
-import ReactQuill from "react-quill";
 import notify from "@/utils/notify";
-import { Event } from "@/types/event";
-import { Amendment, IAmendmentForm } from "@/types/amendment";
+import { IAmendmentForm } from "@/types/amendment";
 
 interface AmendmentErrors {
     title?: string,
@@ -23,11 +21,13 @@ function AmendmentForm() {
     const params = useSearchParams();
     const amendmentId = params.get('amendmentId');
     const bookId = params.get('bookId');
+    const bookTitle = params.get('bookTitle');
     const [isLoading, setIsLoading] = useState(false);
     const { data: amendmentData, isLoading: isQueryLoading, error: queryError, isError: isQueryError } = useQuery({
         queryKey: ['amendment', amendmentId],
         queryFn: () => getOneAmendment(amendmentId!),
         enabled: !!amendmentId,
+        select: (data) => data.data
     });
 
     const [formData, setFormData] = useState<IAmendmentForm>({
@@ -47,16 +47,21 @@ function AmendmentForm() {
         }
     }, [amendmentData]);
 
+    useEffect(() => {
+        if (bookId)
+            setFormData({ ...formData, bookId })
+    }, [bookId])
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         setErrors({ ...errors, [name]: '' });
     };
 
-    const handleDescriptionChange = (value: string) => {
-        setFormData({ ...formData, description: value });
-        setErrors({ ...errors, description: '' });
-    };
+    // const handleDescriptionChange = (value: string) => {
+    //     setFormData({ ...formData, description: value });
+    //     setErrors({ ...errors, description: '' });
+    // };
 
     const validateForm = () => {
         const newErrors: AmendmentErrors = {};
@@ -82,7 +87,7 @@ function AmendmentForm() {
                 const response = await addAmendment(formData);
                 if (response.success) {
                     notify("Amendment successfully created", "success");
-                    router.push('/dashboard/amendments');
+                    router.back();
                 } else {
                     notify("Failed to create amendment", "error");
                 }
@@ -95,6 +100,7 @@ function AmendmentForm() {
     };
 
     const handleEdit = async (e: FormEvent<HTMLElement>) => {
+        if (!amendmentId) return;
         e.preventDefault();
         const newErrors = validateForm();
         if (Object.keys(newErrors).length > 0) {
@@ -103,7 +109,7 @@ function AmendmentForm() {
         } else {
             setIsLoading(true);
             try {
-                const response = await updateAmendment(amendmentId!, formData);
+                const response = await updateAmendment(amendmentId, formData);
                 if (response.success) {
                     notify("Amendment successfully updated", "success");
                 } else {
@@ -176,7 +182,15 @@ function AmendmentForm() {
                         </div>
                         <div>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">Description</label>
-                            <ReactQuill theme="snow" value={formData.description} onChange={handleDescriptionChange} />
+                            {/* <ReactQuill theme="snow" value={formData.description} onChange={handleDescriptionChange} /> */}
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                placeholder="Description..."
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                rows={3}
+                            />
                             {errors.description && <p className="text-red-500 text-xs mt-2">{errors.description}</p>}
                         </div>
                         <div>
@@ -203,7 +217,12 @@ function AmendmentForm() {
                             />
                             {errors.amendment && <p className="text-red-500 text-xs mt-2">{errors.amendment}</p>}
                         </div>
-                        <div>
+                        {(bookId && bookTitle) ?
+                            (<div>
+                                <span>Book:</span> <span className="text-title-md">{bookTitle}</span>
+                            </div>)
+                            : <></>}
+                        <div className={bookId ? "hidden" : ""}>
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                 Book ID
                             </label>

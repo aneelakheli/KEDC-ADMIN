@@ -175,7 +175,7 @@ function BookDetail({ id }: { id: string }) {
         )}
 
       </div>
-      <AmendmentTable bookId={id} />
+      <AmendmentTable bookId={id} bookTitle={bookData.name ?? ""}/>
     </>
   )
 }

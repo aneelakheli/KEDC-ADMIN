@@ -8,21 +8,22 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import notify from "@/utils/notify";
 import { Amendment } from "@/types/amendment";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md";
 import { deleteAmendment, getAllAmendments } from "@/serivces/amendmentService";
+import { useAuth } from '@/context/AuthContext';
 
-const AmendmentTable = ({ bookId }: { bookId: string }) => {
+const AmendmentTable = ({ bookId, bookTitle }: { bookId: string, bookTitle?: string }) => {
   const { data: userData, isLoading, error, isError, refetch: refetchInquiries } = useQuery({
     queryKey: ['inquiries'],
     queryFn: () => getAllAmendments(bookId),
     enabled: !!bookId
   })
+  const authData = useAuth();
 
-  console.log(isLoading, error, isError, isLoading, userData?.data);
+  const router = useRouter();
 
   const DeleteAmendmentComponent = ({ amendmentId }: { amendmentId: string }) => {
 
-    const router = useRouter();
     const [isDeletionLoading, setIsDeletionLoading] = useState(false);
 
     const handleDelete = async () => {
@@ -72,19 +73,20 @@ const AmendmentTable = ({ bookId }: { bookId: string }) => {
     )
   }
 
-
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex my-4 px-8 justify-between items-center">
         <div className='flex items-center'>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Book Amendments</h2>
         </div>
-        <div>
-          <Link href="/amendments/add" className="flex flex-col gap-2 justify-center items-center font-medium ">
-            <FaPlus className="text-xl" />
-            Add New Amendment
-          </Link>
-        </div>
+        {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
+
+          <div>
+            <Link href={`/amendments/add?bookId=${bookId}&bookTitle=${bookTitle}`} className="flex flex-col gap-2 justify-center items-center font-medium ">
+              <FaPlus className="text-xl" />
+              Add New Amendment
+            </Link>
+          </div>)}
       </div>
       <div className="grid grid-cols-12 border-t gap-2 border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5">
         <div className="col-span-2 flex items-center">
@@ -122,11 +124,11 @@ const AmendmentTable = ({ bookId }: { bookId: string }) => {
           <div className="col-span-1 flex items-center">
             <div className="flex">
 
-              <Link href={`/inquiries/${amendment._id}`}>
-                <p className="text-sm text-black dark:text-white">
-                  {amendment?.title}
-                </p>
-              </Link>
+              {/* <Link href={`/inquiries/${amendment._id}`}> */}
+              <p className="text-sm text-black dark:text-white">
+                {amendment?.title}
+              </p>
+              {/* </Link> */}
             </div>
           </div>
           <div className="col-span-1 flex items-center break-words">
@@ -143,9 +145,14 @@ const AmendmentTable = ({ bookId }: { bookId: string }) => {
           <div className="col-span-2 flex items-center">
             <p className="text-sm text-black dark:text-white">{amendment.description}</p>
           </div>
-          <div className="flex items-center break-words">
-            <DeleteAmendmentComponent amendmentId={amendment._id} />
-          </div>
+          {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
+            <div className="flex items-center break-words">
+              <DeleteAmendmentComponent amendmentId={amendment._id} />
+              <button className="px-4 py-2 hover:text-white text-graydark rounded hover:bg-graydark" onClick={() => router.push(`/amendments/add?amendmentId=${amendment._id}`)}>
+                <MdEdit />
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>

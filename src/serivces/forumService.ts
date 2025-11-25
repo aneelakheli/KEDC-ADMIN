@@ -108,15 +108,39 @@ export const addForumReply = async (forumId: string, replyData: ForumReply) => {
 };
 
 // Get all replies for a forum post
-export const getAllForumReplies = async (forumId: string) => {
+export const getUnpublishedForumReplies = async (forumId: string) => {
     try {
-        const response = await get(`/forum/${forumId}/replies`);
+        const response = await get(`/forum/${forumId}/unpublished`);
         console.log("Forum Replies Response +++++++++", response);
         return response.data;
     } catch (error) {
         throw error;
     }
 };
+
+
+// Get published replies for a forum post
+export const getPublishedForumReplies = async (forumId: string) => {
+    try {
+        const response = await get(`/forum/${forumId}/published`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const approveForumReply = async (id: string, replyId: string, approve:boolean = true) => {
+    try {
+        // const formData = new FormData();
+        // formData.append('isPublished', JSON.stringify(1));
+        const payload = { isPublished: approve}
+        const response = await patch(`/forum/${id}/replies/${replyId}/publish`, payload, false, false);  // true for multipart/form-data
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
 
 // Update a forum reply
 export const updateForumReply = async (forumId: string, replyId: string, replyData: ForumReply) => {

@@ -1,23 +1,21 @@
 'use client'
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import moment from 'moment';
 
 import Link from "next/link";
-import { Package } from "@/types/package";
-import { User } from "@/types/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FaCheckCircle, FaPlus, FaTimesCircle, FaTrash } from "react-icons/fa";
+import { FaCheckCircle, FaPlus, FaTrash } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import { approveForum, deleteForum, getAllPublishedForums, getAllUnpublishedForums } from "@/serivces/forumService";
 import { ResponseForum } from "@/types/forum";
+import notify from "@/utils/notify";
 
 const ForumList = () => {
-    const { user } = useAuth();
+    const authData = useAuth();
     const queryClient = useQueryClient();
 
     const [showUnpublished, setShowUnpublished] = useState(false);
-    const [forumData, setForumData] = useState<ResponseForum | null>(null)
+    const [forumData, setForumData] = useState<ResponseForum[] | null>(null)
 
     const { data: UnpublishedForumData, refetch: RefetchUnpublished, isLoading: isUnpublishedLoading, isSuccess: isUnpublishedSuccess, error: unpublishedError, isError: isUnpublishedError } = useQuery({
         queryKey: ['unpublished_forums'],
@@ -98,6 +96,7 @@ const ForumList = () => {
                 onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: ['unpublished_forums'] });
                     queryClient.invalidateQueries({ queryKey: ['published_forums'] });
+                    notify("Forum successfully UnPublished!", "success");
                 },
             }
         );
@@ -115,7 +114,7 @@ const ForumList = () => {
                 onClick={() => { }}
                 className="text-2xl"
             >
-                {(toggleApprovalMn.isLoading) ?
+                {(toggleApprovalMn.isPending) ?
                     (
                         <div
                             className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
@@ -143,33 +142,36 @@ const ForumList = () => {
 
         <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
             <div className="max-w-full overflow-x-auto">
-                <div>
-                    <div className="flex items-center justify-center py-4">
-                        <div className="flex border border-lightred rounded-full overflow-hidden">
-                            {/* Published Button */}
-                            <button
-                                className={`px-4 py-2 ${!showUnpublished
-                                    ? "bg-lightred text-gray-2"
-                                    : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
-                                    }`}
-                                onClick={() => setShowUnpublished(false)}
-                            >
-                                Published
-                            </button>
+                {authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) && (
 
-                            {/* Unpublished Button */}
-                            <button
-                                className={`px-4 py-2 ${showUnpublished
-                                    ? "bg-lightred text-gray-2"
-                                    : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
-                                    }`}
-                                onClick={() => setShowUnpublished(true)}
-                            >
-                                Unpublished
-                            </button>
+                    <div>
+                        <div className="flex items-center justify-center py-4">
+                            <div className="flex border border-lightred rounded-full overflow-hidden">
+                                {/* Published Button */}
+                                <button
+                                    className={`px-4 py-2 ${!showUnpublished
+                                        ? "bg-lightred text-gray-2"
+                                        : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
+                                        }`}
+                                    onClick={() => setShowUnpublished(false)}
+                                >
+                                    Published
+                                </button>
+
+                                {/* Unpublished Button */}
+                                <button
+                                    className={`px-4 py-2 ${showUnpublished
+                                        ? "bg-lightred text-gray-2"
+                                        : "bg-white text-graydark hover:bg-gray-200 hover:bg-gray-2"
+                                        }`}
+                                    onClick={() => setShowUnpublished(true)}
+                                >
+                                    Unpublished
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     {forumData && forumData.map((forum: ResponseForum, key: number) => (
                         <div
@@ -211,22 +213,25 @@ const ForumList = () => {
                             </div>
                             <div className="col-span-1 flex items-center">
                                 <p className="text-sm text-black dark:text-white">
-                                    {forum?.user?.fullName || forum?.user?.email}
+                                    {typeof forum.user === "object" ? (forum?.user?.fullName || forum?.user?.email) : ""}
                                 </p>
                             </div>
 
                             {
-                                ['Admin', 'Author'].includes(user?.role) &&
+                                authData?.user?.role && ['Admin', 'Author'].includes(authData?.user?.role) &&
                                 <div className="col-span-1 ml-4 text-2xl flex gap-2 items-center">
                                     {
                                         !forum?.isPublished && <ApproveForumComponent id={forum?._id} onApprove={handleRefetch} />
                                     }
 
                                     <DeleteForumComponent id={forum?._id} onDelete={handleRefetch} />
+                                    {
+                                        forum.childForumCount ?
+                                            <div>
+                                                <div className="rounded-full p-2 text-sm bg-gray">{forum.childForumCount}</div>
+                                            </div> : <></>
 
-                                    <div>
-                                        <div className="rounded-full p-2 text-sm bg-gray">30</div>
-                                    </div>
+                                    }
                                 </div>
                             }
 
@@ -259,7 +264,7 @@ const ForumList = () => {
                     }
                 </div>
                 {
-                    ['Admin', 'Auther', 'Teacher'].includes(user.role) && (
+                    authData?.user?.role && ['Admin', 'Auther', 'Teacher'].includes(authData?.user?.role) && (
                         <Link href="/forum/add" className="flex flex-col gap-2 justify-center items-center border border-stroke font-medium py-4 my-4">
                             <FaPlus className="text-xl" />
                             Start a Discussion
